@@ -110,7 +110,7 @@ void Parser(){
 
 	for(i = 0; i < check; i++){
 		if(*input_cmd[i] == NULL)//kill the process if command is not found
-			break;
+			continue;
 		if((strcmp(*input_cmd[i], "quit")) == 0){
 			for(int k = 0; k < i; k++){
 				waitpid(pid[k], NULL, 0);
