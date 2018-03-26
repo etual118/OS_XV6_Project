@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#define MAX 100 //maximum input command is 100
+#define MAX 1000 //maximum input command is 1000
 
 char input[MAX]; //input is global variable could be used by Interactive and Batch Function
 
@@ -93,7 +93,7 @@ void Parser(){
 	char** input_cmd[50];//this variable is for saving command so the number of commands should be less then 50
 
 	for(i = 0; i < check; i ++){
-		input_cmd[i] = (char**)malloc(sizeof(char*)*10);//dynamic allocate for saving each input commmands
+		input_cmd[i] = (char**)malloc(sizeof(char*)*100);//dynamic allocate for saving each input commmands
 	}
 
 	for(i = 0; i < check; i++){
@@ -109,6 +109,8 @@ void Parser(){
 	pid_t pid[check];//now make process structure for using wait
 
 	for(i = 0; i < check; i++){
+		if(*input_cmd[i] == NULL)//kill the process if command is not found
+			break;
 		if((strcmp(*input_cmd[i], "quit")) == 0){
 			for(int k = 0; k < i; k++){
 				waitpid(pid[k], NULL, 0);
@@ -119,7 +121,7 @@ void Parser(){
 			exit(0);
 		}else if(pid[i] == 0){//if child process
 			if(execvp(*input_cmd[i], input_cmd[i]) < 0)//use execvp function
-				exit(0);
+				kill(getpid(), SIGINT);//kill if command is not found
 			break;
 		}else{
 			continue;
