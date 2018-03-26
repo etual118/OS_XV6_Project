@@ -3,9 +3,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#define MAX 1000 //maximum input command is 1000
+#define MAX 1000 
+//maximum input command is 1000
 
-char input[MAX]; //input is global variable could be used by Interactive and Batch Function
+char input[MAX]; 
+//input is global variable could be used by Interactive and Batch Function
 
 void Interactive(void);
 void Batch(char input_file[]);
@@ -36,12 +38,14 @@ void Interactive(void){
 	while(1){
 		printf("prompt> ");
 		if(fgets(input, sizeof(input), stdin) == NULL)
-			exit(0); //ctrl + D is EOF, so if return value of fgets function is NULL, then exit the process
+			exit(0); 
+			//ctrl + D is EOF, so if return value of fgets function is NULL, then exit the process
 
 		input[strlen(input)-1] = 0;		
 
 		if(strcmp(input, "quit") == 0){
-			exit(0); //exit by quit command
+			exit(0); 
+			//exit by quit command
 		}
 		Parser();
 	}
@@ -49,12 +53,14 @@ void Interactive(void){
 
 void Batch(char input_file[]){
 
-	FILE *cmd_file = fopen(input_file, "r"); //open file by file pointer and fopen function
+	FILE *cmd_file = fopen(input_file, "r"); 
+	//open file by file pointer and fopen function
 
 	while(1){
 
 		if(fgets(input, sizeof(input), cmd_file) == NULL)
-			exit(0);//when end of the file exit the process
+			exit(0);
+			//when end of the file exit the process
 
 		input[strlen(input)-1] = 0;
 		puts(input);
@@ -74,8 +80,10 @@ void Batch(char input_file[]){
 
 void Parser(){
 
-	char* checkpoint[50]; //it makes checkpoint which means start address of each command seperated by ;
-	int check = 0; //this variable means the number of commands
+	char* checkpoint[50]; 
+	//it makes checkpoint which means start address of each command seperated by ;
+	int check = 0; 
+	//this variable means the number of commands
 	int i = 0;
 	/*
 		now it uses strtok function and parsed all commands
@@ -90,26 +98,32 @@ void Parser(){
 		separator = strtok(NULL, ";");
 	}
 
-	char** input_cmd[50];//this variable is for saving command so the number of commands should be less then 50
+	char** input_cmd[50];
+	//this variable is for saving command so the number of commands should be less then 50
 
 	for(i = 0; i < check; i ++){
-		input_cmd[i] = (char**)malloc(sizeof(char*)*100);//dynamic allocate for saving each input commmands
+		input_cmd[i] = (char**)malloc(sizeof(char*)*100);
+		//dynamic allocate for saving each input commmands
 	}
 
 	for(i = 0; i < check; i++){
 		int j = 0;
-		separator = strtok(checkpoint[i], " ");//seperate each checkpoint by space for save option seperately(like ls -al)
+		separator = strtok(checkpoint[i], " ");
+		//seperate each checkpoint by space for save option seperately(like ls -al)
 		while(separator != NULL){
 			input_cmd[i][j++] = separator;
 			separator = strtok(NULL, " ");
 		}
-		input_cmd[i][j] = separator;//it should be NULL value for using execvp function
+		input_cmd[i][j] = separator;
+		//it should be NULL value for using execvp function
 	}
 	
-	pid_t pid[check];//now make process structure for using wait
+	pid_t pid[check];
+	//now make process structure for using wait
 
 	for(i = 0; i < check; i++){
-		if(*input_cmd[i] == NULL)//kill the process if command is not found
+		if(*input_cmd[i] == NULL)
+		//kill the process if command is not found
 			continue;
 		if((strcmp(*input_cmd[i], "quit")) == 0){
 			for(int k = 0; k < i; k++){
@@ -117,18 +131,23 @@ void Parser(){
 			}
 			exit(0);
 		}//if command is quit then quit after waiting other processes
-		if((pid[i] = fork()) < 0){//this is error case
+		if((pid[i] = fork()) < 0){
+		//this is error case
 			exit(0);
-		}else if(pid[i] == 0){//if child process
-			if(execvp(*input_cmd[i], input_cmd[i]) < 0)//use execvp function
-				kill(getpid(), SIGINT);//kill if command is not found
+		}else if(pid[i] == 0){
+		//if child process
+			if(execvp(*input_cmd[i], input_cmd[i]) < 0)
+			//use execvp function
+				kill(getpid(), SIGINT);
+				//kill if command is not found
 			break;
 		}else{
 			continue;
 		}
 	}
 	for(i = 0; i < check; i++){
-		waitpid(pid[i], NULL, 0);//and wait other process
+		waitpid(pid[i], NULL, 0);
+		//and wait other process
 	}
 }
 
