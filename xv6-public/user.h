@@ -25,6 +25,8 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int myfunction(char*);
+int yield(void);
+
 // ulib.c
 int stat(char*, struct stat*);
 char* strcpy(char*, char*);
