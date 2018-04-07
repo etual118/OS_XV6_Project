@@ -14,6 +14,12 @@ sys_fork(void)
 }
 
 int
+sys_yield(void)
+{
+  return yield();
+}
+
+int
 sys_exit(void)
 {
   exit();
