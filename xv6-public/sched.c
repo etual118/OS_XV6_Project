@@ -11,6 +11,7 @@ struct stride s_cand[NPROC];
 struct FQ MLFQ_table[3];
 
 int global_ticks = 0;
+
 extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -124,6 +125,7 @@ pick_pass(void)
 					continue;
 
 				if(s->pass < min)
+					min = s->pass;
 					pick = s;
 			}
 			return pick->proc;
