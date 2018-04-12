@@ -27,7 +27,8 @@ OBJS = \
 	uart.o\
 	vectors.o\
 	vm.o\
-        prac_syscall.o\
+    prac_syscall.o\
+    sched.o\
 
 # Cross-compiling (e.g., on Mac OS X)
 # TOOLPREFIX = i386-jos-elf

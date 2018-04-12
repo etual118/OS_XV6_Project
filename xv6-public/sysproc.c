@@ -56,6 +56,21 @@ sys_getppid(void)
 }
 
 int
+sys_getlev(void)
+{
+  return myproc()->prior;
+}
+
+int
+sys_set_cpu_share(void)
+{
+  int n;
+  if(argint(0, &n) < 0)
+    return -1;
+  return set_cpu_share(n);
+}
+
+int
 sys_sbrk(void)
 {
   int addr;

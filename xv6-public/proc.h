@@ -49,8 +49,26 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  uint prior;                  /// MLFQ priority, when prior is 3 it is stride
+  uint pticks;                 /// pticks for time allotment
+  struct stride* myst; 
 };
 
+struct stride {
+  int stride;
+  int pass;
+  int share;
+  int valid;
+  struct proc* proc;
+};
+
+struct FQ {
+  int total;
+  int recent;
+  struct proc* wait[NPROC];
+};
+
+extern struct stride s_cand[NPROC];
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss
