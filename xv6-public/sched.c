@@ -108,9 +108,9 @@ pick_pass(void)
 	struct stride* s;
 	int i = 0;
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
-		cprintf(" %d ", i);
+		cprintf("%d ->", i);
 		if(s->valid == 0){
-			cprintf("c1 %d ", i);
+			cprintf("c1 %d ", i++);
 			continue;
 		}
 		if(s->proc->state != RUNNABLE){
