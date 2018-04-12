@@ -64,8 +64,10 @@ pick_MLFQ(void)
 {
 	int j;
 	for(int i = 0; i < 3; i++){
-		if(MLFQ_table[i].total == 0)
+		if(MLFQ_table[i].total == 0){
+			cprintf("%d is empty\n", i);
 			continue;
+		}
 		do{
 			j = (MLFQ_table[i].recent + 1) % NPROC;
 			if(MLFQ_table[i].wait[j] != 0 && 
@@ -109,8 +111,10 @@ pick_pass(void)
 		if(s->pass < pick->pass)
 			pick = s;
 	}
-	if(pick == s_cand)
+	if(pick == s_cand){
+		cprintf("now MLFQ call\n");
 		return pick_MLFQ();
+	}
 	return pick->proc;
 }
 //어떻게 mlfq를 0에????
