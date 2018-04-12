@@ -11,7 +11,11 @@ struct stride s_cand[NPROC];
 struct proc* recent_MLFQ;
 struct FQ MLFQ_table[3];
 int global_ticks = 0;
-extern struct ptable;
+extern struct {
+  struct spinlock lock;
+  struct proc proc[NPROC];
+}ptable;
+
 
 int
 push_MLFQ(int prior, struct proc* p)
