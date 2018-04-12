@@ -147,10 +147,9 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
 
-
+      cprintf("pid is %d\n", p->pid);
       ///패스에 의해서 하나를 뽑아야함
       win = pick_pass();
-      cprintf("pick win %d\n", getpid());
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
