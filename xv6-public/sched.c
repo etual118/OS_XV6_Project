@@ -164,6 +164,7 @@ scheduler(void)
 
       
       ///패스에 의해서 하나를 뽑아야함
+      cprintf("pick_pass called\n");
       win = pick_pass();
       if(win == 0){
       	cprintf("fatal pick\n");
