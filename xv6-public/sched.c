@@ -65,21 +65,16 @@ pick_MLFQ(void)
 	int j;
 	for(int i = 0; i < 3; i++){
 		if(MLFQ_table[i].total == 0){
-			cprintf("%d is empty\n", i);
 			continue;
 		}
 		j = MLFQ_table[i].recent;
 		do{
 			j = (j + 1) % NPROC;
-			cprintf("now j is %d\n", j);
 			if(MLFQ_table[i].wait[j] != 0 && 
 				MLFQ_table[i].wait[j]->state == RUNNABLE){
 				MLFQ_table[i].recent = j;
-				cprintf("%d's total is %d and pick %d\n",i, 
-					MLFQ_table[i].total, MLFQ_table[i].wait[j]->pid);
 				return MLFQ_table[i].wait[j];
 			}
-			cprintf("not fit\n");
 		}while(j != MLFQ_table[i].recent);
 	}
 	return 0;
@@ -117,7 +112,6 @@ pick_pass(void)
 			pick = s;
 	}
 	if(pick == s_cand){
-		cprintf("now MLFQ call\n");
 		return pick_MLFQ();
 	}
 	return pick->proc;
@@ -131,7 +125,7 @@ scheduler(void)
   struct cpu *c = mycpu();
   c->proc = 0;
 
-	cprintf("init sched\n");
+	
   for(;;){
     // Enable interrupts on this processor.
     sti();
@@ -142,7 +136,7 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
 
-      cprintf("pid is %d\n", p->pid);
+      
       ///패스에 의해서 하나를 뽑아야함
       win = pick_pass();
       // Switch to chosen process.  It is the process's job
