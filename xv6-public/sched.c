@@ -77,7 +77,7 @@ pick_MLFQ(void)
 			}
 		}while(j != MLFQ_table[i].recent);
 	}
-	cprintf("not in mlfq\n");
+	
 	return 0;
 }
 
@@ -94,7 +94,7 @@ prior_boost(void)
 		}
 	}
 	release(&ptable.lock);
-	cprintf("[do boost!]\n");
+	cprintf("[do boosting!]\n");
 }
 
 struct proc*
@@ -114,7 +114,21 @@ pick_pass(void)
 			pick = s;
 	}
 	if(pick == s_cand){
-		return pick_MLFQ();
+		struct proc* mlfq_proc = pick_MLFQ();
+		if(mlfq_proc == 0){
+			uint min = 4000000000;
+			for(s = &s_cand[1]; s < &s_cand[NPROC]; s++){
+				if(s->valid == 0 || s->proc == 0)
+					continue;
+				if(s->proc->state != RUNNABLE)
+					continue;
+
+				if(s->pass < min)
+					pick = s;
+			}
+			return pick->proc;
+		}
+		return mlfq_proc;
 	}
 	return pick->proc;
 }
