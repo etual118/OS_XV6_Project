@@ -111,10 +111,11 @@ pick_pass(void)
 			continue;
 		if(s->proc->state != RUNNABLE)
 			continue;
-
+		cprintf("stride : %d pass : %d\t",s->stride, s->pass);
 		if(s->pass < pick->pass)
 			pick = s;
 	}
+	cprintf("\n");
 	if(pick == s_cand){
 		struct proc* mlfq_proc = pick_MLFQ();
 
@@ -125,7 +126,7 @@ pick_pass(void)
 					continue;
 				if(s->proc->state != RUNNABLE)
 					continue;
-				cprintf("\npass : %d\n",s->pass);
+				
 				if(s->pass < min){
 					min = s->pass;
 					pick = s;
@@ -255,7 +256,7 @@ MLFQ_tick_adder(void)
 	
 	p->pticks++;
 	int quantum = p->pticks;
-
+	cprintf("now %d and qunt %d\n", p->prior, quantum);
 	switch(p->prior){
 		case 0:
 			if(quantum >= 5){
