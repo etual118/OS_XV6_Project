@@ -11,7 +11,7 @@ struct stride s_cand[NPROC];
 struct proc* recent_MLFQ;
 struct FQ MLFQ_table[3];
 int global_ticks = 0;
-
+extern struct pt ptable;
 
 int
 push_MLFQ(int prior, struct proc* p)
@@ -34,7 +34,7 @@ push_MLFQ(int prior, struct proc* p)
 int
 pop_MLFQ(struct proc* p)
 {
-	prior = p->prior;
+	int prior = p->prior;
 	for(int i = 0; i < NPROC; i++){
 		if(MLFQ_table[prior].wait[i] == p){
 			MLFQ_table[prior].wait[i] = 0;
@@ -69,7 +69,7 @@ pick_MLFQ(void)
 				MLFQ_table[i].recent = j;
 				return MLFQ_table[i].wait[j];
 			}
-		}while(j != MLFQ_table[i].recent)
+		}while(j != MLFQ_table[i].recent);
 	}
 	return 0;
 }
@@ -120,7 +120,7 @@ scheduler(void)
   struct stride* s;
 	
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
-		s->vaild = 0;
+		s->valid = 0;
 	}
 	s_cand[0].valid = 1;
 
@@ -167,8 +167,9 @@ scheduler(void)
 
 int
 set_cpu_share(int inquire)
-{
-	if(share <= 0)
+{	
+
+	if(inquire <= 0)
 		return -1;
 
 	struct stride* s;
@@ -218,7 +219,7 @@ int
 MLFQ_tick_adder(void)
 {
 
-	struct proc* proc = myproc();
+	struct proc* p = myproc();
 	if(p->prior ==3)
 		return 1;
 	if(++global_ticks >= 100)

@@ -54,6 +54,11 @@ struct proc {
   struct stride* myst; 
 };
 
+struct pt{
+  struct spinlock lock;
+  struct proc proc[NPROC];
+};
+
 struct stride {
   int stride;
   int pass;
