@@ -94,6 +94,7 @@ prior_boost(void)
 		}
 	}
 	release(&ptable.lock);
+	cprintf("[do boosting!]\n");
 }
 
 struct proc*

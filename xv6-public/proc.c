@@ -281,6 +281,12 @@ exit(void)
     }
   }
 
+  if(curproc->s == s_cand){
+    pop_MLFQ(curproc);
+  }else{
+    curproc->s->valid = 0;
+  }
+
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
   sched();
