@@ -11,7 +11,7 @@ struct stride s_cand[NPROC];
 struct proc* recent_MLFQ;
 struct FQ MLFQ_table[3];
 int global_ticks = 0;
-extern struct pt ptable;
+extern struct ptable;
 
 int
 push_MLFQ(int prior, struct proc* p)
