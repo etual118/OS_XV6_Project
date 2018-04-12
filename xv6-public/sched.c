@@ -68,8 +68,9 @@ pick_MLFQ(void)
 			cprintf("%d is empty\n", i);
 			continue;
 		}
+		j = MLFQ_table[i].recent;
 		do{
-			j = (MLFQ_table[i].recent + 1) % NPROC;
+			j = (j + 1) % NPROC;
 			cprintf("now j is %d\n", j);
 			if(MLFQ_table[i].wait[j] != 0 && 
 				MLFQ_table[i].wait[j]->state == RUNNABLE){
