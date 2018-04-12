@@ -64,8 +64,10 @@ pick_MLFQ(void)
 {
 	int j;
 	for(int i = 0; i < 3; i++){
-		if(MLFQ_table[i].total == 0)
+		if(MLFQ_table[i].total == 0){
+			cprintf("%d is empty\n", i);
 			continue;
+		}
 		do{
 			j = (MLFQ_table[i].recent + 1) % NPROC;
 			if(MLFQ_table[i].wait[j] != 0 && 
@@ -109,8 +111,10 @@ pick_pass(void)
 		if(s->pass < pick->pass)
 			pick = s;
 	}
-	if(pick == s_cand)
+	if(pick == s_cand){
+		cprintf("now MLFQ call\n");
 		return pick_MLFQ();
+	}
 	return pick->proc;
 }
 //어떻게 mlfq를 0에????
@@ -147,10 +151,9 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
 
-
+      cprintf("pid is %d\n", p->pid);
       ///패스에 의해서 하나를 뽑아야함
       win = pick_pass();
-      cprintf("pick win %d\n", getpid());
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
