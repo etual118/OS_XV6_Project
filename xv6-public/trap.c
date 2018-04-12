@@ -105,11 +105,13 @@ trap(struct trapframe *tf)
   if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER){
     int tks = MLFQ_tick_adder();
-    if(tks){
+
+    if(tks == -1){
+      cprintf("fatal err\n");
+    }else if(tks > 0){
       stride_adder(tks);
       yield();
-    }
-    
+    }    
   }
   // Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)

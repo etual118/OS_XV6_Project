@@ -125,7 +125,7 @@ pick_pass(void)
 					continue;
 				if(s->proc->state != RUNNABLE)
 					continue;
-				cprintf("pass : %d\n",s->pass);
+				cprintf("\npass : %d\n",s->pass);
 				if(s->pass < min){
 					min = s->pass;
 					pick = s;
