@@ -116,6 +116,7 @@ pick_pass(void)
 	}
 	if(pick == s_cand){
 		struct proc* mlfq_proc = pick_MLFQ();
+
 		if(mlfq_proc == 0){
 			uint min = 4000000000;
 			for(s = &s_cand[1]; s < &s_cand[NPROC]; s++){
@@ -131,6 +132,8 @@ pick_pass(void)
 			cprintf("case 1 : stride = %d, pass = %d\n", pick->stride, pick->pass);
 			return pick->proc;
 		}
+		
+		cprintf("case 3 : stride = %d, pass = %d\n", mlfq_proc->stride, mlfq_proc->pass);
 		return mlfq_proc;
 	}
 	cprintf("case 2 : stride = %d, pass = %d\n", pick->stride, pick->pass);
