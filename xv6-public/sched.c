@@ -249,12 +249,16 @@ MLFQ_tick_adder(void)
 			}else{
 				return 0;
 			}
-
+			break;
 		case 2:
 			if((quantum % 4) == 0){
 				return 4;
 			}else{
 				return 0;
 			}
-	}
+			break;
+		default:
+			return -1;
+	}		
+	
 }
