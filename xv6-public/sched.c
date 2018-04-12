@@ -77,6 +77,7 @@ pick_MLFQ(void)
 			}
 		}while(j != MLFQ_table[i].recent);
 	}
+	cprintf("not in mlfq\n");
 	return 0;
 }
 
@@ -93,6 +94,7 @@ prior_boost(void)
 		}
 	}
 	release(&ptable.lock);
+	cprintf("[do boost!]\n");
 }
 
 struct proc*
@@ -139,6 +141,10 @@ scheduler(void)
       
       ///패스에 의해서 하나를 뽑아야함
       win = pick_pass();
+      if(win == 0){
+      	cprintf("fatal pick\n");
+      	win = p;
+      }
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
