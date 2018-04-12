@@ -15,10 +15,10 @@ main(int argc, char *argv[])
 
 	if(pid == 0) { //0이면 자식 프로세스
 		printf(1, "parent\n");
-		exit(0);
+		exit();
 	} else { //부모프로세스
 		printf(1, "child\n");
-		exit(0);
+		exit();
 	}
  	exit();
 }
