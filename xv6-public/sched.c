@@ -125,7 +125,7 @@ pick_pass(void)
 					continue;
 				if(s->proc->state != RUNNABLE)
 					continue;
-
+				cprintf("pass : %d\n",s->pass);
 				if(s->pass < min){
 					min = s->pass;
 					pick = s;
@@ -274,6 +274,7 @@ MLFQ_tick_adder(void)
 				return 0;
 			}
 			break;
+
 		case 2:
 			if((quantum % 4) == 0){
 				return 4;
