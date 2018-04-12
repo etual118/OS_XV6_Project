@@ -107,7 +107,7 @@ pick_pass(void)
 	struct stride* pick = s_cand;
 	struct stride* s;
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
-		if(s->valid == 0 || s->proc == 0)
+		if(s->valid == 0)
 			continue;
 		if(s->proc->state != RUNNABLE)
 			continue;
