@@ -108,20 +108,22 @@ pick_pass(void)
 	struct stride* s;
 	int i = 0;
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
-		cprintf("%d -> ", i++);
+		//cprintf("%d -> ", i++);
 		if(s->valid == 0){
-			cprintf(" c1 ");
+			//cprintf(" c1 ");
 			continue;
 		}
 		if(s->proc->state != RUNNABLE){
-			cprintf(" c2 ");
+			//cprintf(" c2 ");
 			continue;
 		}
-		cprintf("stride : %d pass : %d\t",s->stride, s->pass);
+		//cprintf("stride : %d pass : %d\t",s->stride, s->pass);
+		i++;
 		if(s->pass < pick->pass)
 			pick = s;
 	}
-	cprintf("\n");
+	//cprintf("\n");
+	if(i == 0) cprintf("no valid stride!\n");
 	if(pick == s_cand){
 		struct proc* mlfq_proc = pick_MLFQ();
 
@@ -138,14 +140,14 @@ pick_pass(void)
 					pick = s;
 				}
 			}
-			cprintf("case 1 : stride = %d, pass = %d\n", pick->stride, pick->pass);
+			//cprintf("case 1 : stride = %d, pass = %d\n", pick->stride, pick->pass);
 			return pick->proc;
 		}
 
-		cprintf("case 3 : stride = %d, pass = %d, pri = %d\n", s_cand[0].stride, s_cand[0].pass, mlfq_proc->prior);
+		//cprintf("case 3 : stride = %d, pass = %d, pri = %d\n", s_cand[0].stride, s_cand[0].pass, mlfq_proc->prior);
 		return mlfq_proc;
 	}
-	cprintf("case 2 : stride = %d, pass = %d\n", pick->stride, pick->pass);
+	//cprintf("case 2 : stride = %d, pass = %d\n", pick->stride, pick->pass);
 	return pick->proc;
 }
 //어떻게 mlfq를 0에????
@@ -170,7 +172,7 @@ scheduler(void)
 
       
       ///패스에 의해서 하나를 뽑아야함
-      cprintf("pick_pass called\n");
+      //cprintf("pick_pass called\n");
       win = pick_pass();
       if(win == 0){
       	cprintf("fatal pick\n");
@@ -263,7 +265,7 @@ MLFQ_tick_adder(void)
 	
 	p->pticks++;
 	int quantum = p->pticks;
-	cprintf("now %d and qunt %d\n", p->prior, quantum);
+	//cprintf("now %d and qunt %d\n", p->prior, quantum);
 	switch(p->prior){
 		case 0:
 			if(quantum >= 5){
