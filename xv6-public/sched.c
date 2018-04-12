@@ -101,7 +101,7 @@ pick_pass(void)
 	struct stride* pick = s_cand;
 	struct stride* s;
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
-		if(s->valid == 0)
+		if(s->valid == 0 || s->proc == 0)
 			continue;
 		if(s->proc->state != RUNNABLE)
 			continue;
@@ -125,6 +125,7 @@ scheduler(void)
 	
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
 		s->valid = 0;
+		s->proc = 0;
 	}
 	s_cand[0].valid = 1;
 
@@ -135,7 +136,7 @@ scheduler(void)
 			MLFQ_table[i].wait[j] = 0;
 		}
 	}
-
+	cprintf("init sched\n");
   for(;;){
     // Enable interrupts on this processor.
     sti();
@@ -149,7 +150,7 @@ scheduler(void)
 
       ///패스에 의해서 하나를 뽑아야함
       win = pick_pass();
-
+      cprintf("pick win %d\n", getpid());
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
