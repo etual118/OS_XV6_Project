@@ -105,10 +105,10 @@ trap(struct trapframe *tf)
   if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER){
     int tks = MLFQ_tick_adder();
-
+    if(tks){
       stride_adder(tks);
       yield();
-    
+    }
     
   }
   // Check if the process has been killed since we yielded

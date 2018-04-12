@@ -218,6 +218,7 @@ set_cpu_share(int inquire)
 	pop_MLFQ(p);
 	p->prior = 3;
 	s->valid = 1;
+	cprintf("my stride %d\n", s->stride);
 	return 0;
 }
 
@@ -227,6 +228,11 @@ stride_adder(int step)
 	struct stride* s = myproc()->myst;
 	for(int i = 0; i < step; i++){
 		s->pass += s->stride;
+	}
+	if(s->pass > 3000000000){
+		for(s = s_cand; s < &s_cand[NPROC]; s++){
+			s->pass = 0;
+		}
 	}
 }
 
