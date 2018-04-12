@@ -29,6 +29,7 @@ push_MLFQ(int prior, struct proc* p)
 			MLFQ_table[prior].wait[i] = p;
 			p->prior = prior;
 			p->pticks = 0;
+			p->myst = s_cand;
 			MLFQ_table[prior].total++;
 			return 0;
 		}

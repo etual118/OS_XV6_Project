@@ -117,7 +117,6 @@ found:
 
   push_MLFQ(0, p);
   p->myst = s_cand;
-  s_cand[0].proc = 0;
   return p;
 }
 
@@ -145,7 +144,7 @@ userinit(void)
   }
 
   p = allocproc();
-  
+  s_cand[0].proc = p;
   initproc = p;
   if((p->pgdir = setupkvm()) == 0)
     panic("userinit: out of memory?");
