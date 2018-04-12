@@ -69,7 +69,7 @@ struct FQ {
   struct proc* wait[NPROC];
 };
 
-extern struct stride s_cand[NPROC];
+
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss
