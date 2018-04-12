@@ -73,6 +73,8 @@ pick_MLFQ(void)
 			if(MLFQ_table[i].wait[j] != 0 && 
 				MLFQ_table[i].wait[j]->state == RUNNABLE){
 				MLFQ_table[i].recent = j;
+				cprintf("%d's total is %d and pick %d\n",i, 
+					MLFQ_table[i].total, MLFQ_table[i].wait[j]->pid);
 				return MLFQ_table[i].wait[j];
 			}
 		}while(j != MLFQ_table[i].recent);
