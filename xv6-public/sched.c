@@ -128,12 +128,12 @@ pick_pass(void)
 					min = s->pass;
 					pick = s;
 			}
-			cprintf("case 1 : stride = %d, pass = %d\n", s->stride, s->pass);
+			cprintf("case 1 : stride = %d, pass = %d\n", pick->stride, pick->pass);
 			return pick->proc;
 		}
 		return mlfq_proc;
 	}
-	cprintf("case 2 : stride = %d, pass = %d\n", s->stride, s->pass);
+	cprintf("case 2 : stride = %d, pass = %d\n", pick->stride, pick->pass);
 	return pick->proc;
 }
 //어떻게 mlfq를 0에????
