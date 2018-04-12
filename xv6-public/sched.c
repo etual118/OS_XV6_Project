@@ -193,7 +193,7 @@ set_cpu_share(int inquire)
 		return -1;
 
 	struct stride* s;
-	int min_pass = 0;
+	uint min_pass = 4000000000;
 	int sum = inquire;
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
 		if(s->valid == 1){
