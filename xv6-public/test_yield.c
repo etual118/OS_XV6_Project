@@ -23,9 +23,13 @@ main(int argc, char *argv[])
 	} else { //부모프로세스
 		printf(1, "child\n");
 		exit();
+<<<<<<< HEAD
 	
         }
         }
+=======
+	}
+>>>>>>> 9911877b946faad769f21adb8f8d8effa3ac0dfb
 	return 0;
 }
 
