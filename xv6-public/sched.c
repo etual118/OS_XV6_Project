@@ -123,7 +123,7 @@ pick_pass(void)
 			pick = s;
 	}
 	//cprintf("\n");
-	if(i == 0) cprintf("no valid stride!\n");
+	//if(i == 0) cprintf("no valid stride!\n");
 	if(pick == s_cand){
 		struct proc* mlfq_proc = pick_MLFQ();
 
@@ -235,7 +235,6 @@ set_cpu_share(int inquire)
 	pop_MLFQ(p);
 	p->prior = 3;
 	s->valid = 1;
-	cprintf("my stride : %d\n", s->stride);
 	return 0;
 }
 

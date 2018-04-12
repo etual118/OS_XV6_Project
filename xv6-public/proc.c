@@ -281,10 +281,8 @@ exit(void)
   }
 
   if(curproc->myst == s_cand){
-    cprintf("MLFQ out\n");
     pop_MLFQ(curproc);
   }else{
-    cprintf("stride out : %d\n", curproc->myst->stride);
     curproc->myst->valid = 0;
   }
 
