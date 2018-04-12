@@ -20,6 +20,10 @@ extern void trapret(void);
 
 static void wakeup1(void *chan);
 
+
+extern struct stride s_cand[NPROC];
+extern struct FQ MLFQ_table[3];
+
 void
 pinit(void)
 {
@@ -125,6 +129,21 @@ userinit(void)
 {
   struct proc *p;
   extern char _binary_initcode_start[], _binary_initcode_size[];
+  struct stride* s;
+  
+  for(s = s_cand; s < &s_cand[NPROC]; s++){
+    s->valid = 0;
+    s->proc = 0;
+  }
+  s_cand[0].valid = 1;
+
+  for(int i = 0; i < 3; i++){
+    MLFQ_table[i].total = 0;
+    MLFQ_table[i].recent = 0;
+    for(int j = 0; j < NPROC; j++){
+      MLFQ_table[i].wait[j] = 0;
+    }
+  }
 
   p = allocproc();
   

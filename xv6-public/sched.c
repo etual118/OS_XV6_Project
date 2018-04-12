@@ -8,8 +8,8 @@
 #include "spinlock.h"
 
 struct stride s_cand[NPROC];
-struct proc* recent_MLFQ;
 struct FQ MLFQ_table[3];
+
 int global_ticks = 0;
 extern struct {
   struct spinlock lock;
@@ -125,21 +125,7 @@ scheduler(void)
   struct proc *win;
   struct cpu *c = mycpu();
   c->proc = 0;
-  struct stride* s;
-	
-	for(s = s_cand; s < &s_cand[NPROC]; s++){
-		s->valid = 0;
-		s->proc = 0;
-	}
-	s_cand[0].valid = 1;
 
-	for(int i = 0; i < 3; i++){
-		MLFQ_table[i].total = 0;
-		MLFQ_table[i].recent = 0;
-		for(int j = 0; j < NPROC; j++){
-			MLFQ_table[i].wait[j] = 0;
-		}
-	}
 	cprintf("init sched\n");
   for(;;){
     // Enable interrupts on this processor.
