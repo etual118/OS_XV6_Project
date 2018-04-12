@@ -70,6 +70,7 @@ pick_MLFQ(void)
 		}
 		do{
 			j = (MLFQ_table[i].recent + 1) % NPROC;
+			cprintf("now j is %d\n", j);
 			if(MLFQ_table[i].wait[j] != 0 && 
 				MLFQ_table[i].wait[j]->state == RUNNABLE){
 				MLFQ_table[i].recent = j;
@@ -77,6 +78,7 @@ pick_MLFQ(void)
 					MLFQ_table[i].total, MLFQ_table[i].wait[j]->pid);
 				return MLFQ_table[i].wait[j];
 			}
+			cprintf("not fit\n");
 		}while(j != MLFQ_table[i].recent);
 	}
 	return 0;
