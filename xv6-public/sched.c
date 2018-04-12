@@ -106,11 +106,17 @@ pick_pass(void)
 	///MLFQ가 뽑혔다면, MLFQ에 의해서 다시 뽑아준다.
 	struct stride* pick = s_cand;
 	struct stride* s;
+	int i = 0;
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
-		if(s->valid == 0)
+		cprintf(" %d ", i);
+		if(s->valid == 0){
+			cprintf("c1 %d ", i);
 			continue;
-		if(s->proc->state != RUNNABLE)
+		}
+		if(s->proc->state != RUNNABLE){
+			cprintf("c2 %d ", i++);
 			continue;
+		}
 		cprintf("stride : %d pass : %d\t",s->stride, s->pass);
 		if(s->pass < pick->pass)
 			pick = s;
