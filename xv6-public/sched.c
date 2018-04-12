@@ -121,14 +121,15 @@ pick_pass(void)
 		if(mlfq_proc == 0){
 			uint min = 4000000000;
 			for(s = &s_cand[1]; s < &s_cand[NPROC]; s++){
-				if(s->valid == 0 || s->proc == 0)
+				if(s->valid == 0)
 					continue;
 				if(s->proc->state != RUNNABLE)
 					continue;
 
-				if(s->pass < min)
+				if(s->pass < min){
 					min = s->pass;
 					pick = s;
+				}
 			}
 			cprintf("case 1 : stride = %d, pass = %d\n", pick->stride, pick->pass);
 			return pick->proc;
