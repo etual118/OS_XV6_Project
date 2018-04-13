@@ -65,7 +65,23 @@ move_MLFQ_prior(int prior, struct proc* p)
 struct proc*
 pick_MLFQ(void)
 {
+
 	int i, j;
+	//
+	for(i = 0; i < 3; i++){
+		if(MLFQ_table[i].total == 0){
+			cprintf("no proc in prior %d\n", i);
+			continue;
+		}
+		j = MLFQ_table[i].recent;
+		do{
+			j = (j + 1) % NPROC;
+			if(MLFQ_table[i].wait[j] != 0){
+				cprintf("%d(%d)\n", MLFQ_table[i].wait[j]->pid, MLFQ_table[i].wait[j]->state);
+			}
+		}while(j != MLFQ_table[i].recent);
+	}
+	//
 	for(i = 0; i < 3; i++){
 		if(MLFQ_table[i].total == 0){
 			continue;
@@ -182,6 +198,7 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+      //cprintf("%d : %s (pid:%d, ticks:%d, state:%d, level:%d)\n", ticks, win->name, win->pid, win->pticks, win->state, win->prior);
       c->proc = win;
       switchuvm(win);
       win->state = RUNNING;

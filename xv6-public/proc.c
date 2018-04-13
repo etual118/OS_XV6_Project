@@ -7,6 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 
+uint ticks;
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -467,6 +468,7 @@ sleep(void *chan, struct spinlock *lk)
   p->chan = chan;
   p->state = SLEEPING;
 
+  cprintf("%d : sched is called by sleep : %s(%d)\n", ticks, p->name, p->pid);
   sched();
 
   // Tidy up.
@@ -552,6 +554,7 @@ procdump(void)
     else
       state = "???";
     cprintf("%d %s %s", p->pid, state, p->name);
+    
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)
