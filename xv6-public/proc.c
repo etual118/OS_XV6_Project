@@ -134,11 +134,11 @@ userinit(void)
     s->proc = 0;
   }
   s_cand[0].valid = 1;
-
-  for(int i = 0; i < 3; i++){
+  int i, j;
+  for(i = 0; i < 3; i++){
     MLFQ_table[i].total = 0;
     MLFQ_table[i].recent = 0;
-    for(int j = 0; j < NPROC; j++){
+    for(j = 0; j < NPROC; j++){
       MLFQ_table[i].wait[j] = 0;
     }
   }

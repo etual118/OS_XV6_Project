@@ -23,8 +23,8 @@ push_MLFQ(int prior, struct proc* p)
 {
 	if(prior < 0 || prior > 2)
 		return -1;
-
-	for(int i = 0; i < NPROC; i++){
+	int i;
+	for(i = 0; i < NPROC; i++){
 		if(MLFQ_table[prior].wait[i] == 0){
 			MLFQ_table[prior].wait[i] = p;
 			p->prior = prior;
@@ -41,7 +41,8 @@ int
 pop_MLFQ(struct proc* p)
 {
 	int prior = p->prior;
-	for(int i = 0; i < NPROC; i++){
+	int i;
+	for(i = 0; i < NPROC; i++){
 		if(MLFQ_table[prior].wait[i] == p){
 			MLFQ_table[prior].wait[i] = 0;
 			p->pticks = 0;
@@ -64,8 +65,8 @@ move_MLFQ_prior(int prior, struct proc* p)
 struct proc*
 pick_MLFQ(void)
 {
-	int j;
-	for(int i = 0; i < 3; i++){
+	int i, j;
+	for(i = 0; i < 3; i++){
 		if(MLFQ_table[i].total == 0){
 			continue;
 		}
@@ -128,7 +129,7 @@ pick_pass(void)
 		struct proc* mlfq_proc = pick_MLFQ();
 
 		if(mlfq_proc == 0){
-			uint min = 4000000000;
+			uint min = 400000000;
 			for(s = &s_cand[1]; s < &s_cand[NPROC]; s++){
 				if(s->valid == 0)
 					continue;
@@ -205,7 +206,7 @@ set_cpu_share(int inquire)
 		return -1;
 
 	struct stride* s;
-	uint min_pass = 4000000000;
+	uint min_pass = 400000000;
 	int sum = inquire;
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
 		if(s->valid == 1){
@@ -242,10 +243,11 @@ void
 stride_adder(int step)
 {
 	struct stride* s = myproc()->myst;
-	for(int i = 0; i < step; i++){
+	int i;
+	for(i = 0; i < step; i++){
 		s->pass += s->stride;
 	}
-	if(s->pass > 3000000000){
+	if(s->pass > 300000000){
 		for(s = s_cand; s < &s_cand[NPROC]; s++){
 			s->pass = 0;
 		}
