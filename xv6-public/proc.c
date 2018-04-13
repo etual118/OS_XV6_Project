@@ -468,7 +468,7 @@ sleep(void *chan, struct spinlock *lk)
   p->chan = chan;
   p->state = SLEEPING;
 
-  cprintf("%d : sched is called by sleep : %s(%d)\n", ticks, p->name, p->pid);
+  //cprintf("%d : sched is called by sleep : %s(%d)\n", ticks, p->name, p->pid);
   sched();
 
   // Tidy up.

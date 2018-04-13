@@ -67,21 +67,7 @@ pick_MLFQ(void)
 {
 
 	int i, j;
-	//
-	for(i = 0; i < 3; i++){
-		if(MLFQ_table[i].total == 0){
-			cprintf("no proc in prior %d\n", i);
-			continue;
-		}
-		j = MLFQ_table[i].recent;
-		do{
-			j = (j + 1) % NPROC;
-			if(MLFQ_table[i].wait[j] != 0){
-				cprintf("%d(%d)\n", MLFQ_table[i].wait[j]->pid, MLFQ_table[i].wait[j]->state);
-			}
-		}while(j != MLFQ_table[i].recent);
-	}
-	//
+
 	for(i = 0; i < 3; i++){
 		if(MLFQ_table[i].total == 0){
 			continue;
