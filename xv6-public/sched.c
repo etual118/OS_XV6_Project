@@ -154,6 +154,17 @@ pick_pass(void)
 	return pick->proc;
 }
 //어떻게 mlfq를 0에????
+//
+////PAGEBREAK: 42
+// Per-CPU process scheduler.
+// Each CPU calls scheduler() after setting itself up.
+// Scheduler never returns.  It loops, doing:
+//  - choose a process to run
+//  - swtch to start running that process
+//  - eventually that process transfers control
+//      via swtch back to the scheduler.
+
+
 void
 scheduler(void)
 {
