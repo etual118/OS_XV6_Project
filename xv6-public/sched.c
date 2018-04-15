@@ -191,7 +191,6 @@ scheduler(void)
 
       swtch(&(c->scheduler), win->context);
       switchkvm();
-
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
@@ -262,24 +261,25 @@ MLFQ_tick_adder(void)
 {
 
 	struct proc* p = myproc();
-	if(p->prior ==3)
-		return 1;
+	
 	if(++global_ticks >= 100)
 		prior_boost();
-	
-	p->pticks++;
 	int quantum = p->pticks;
+	p->pticks++;
+	
+	if(p->prior ==3)
+		return 1;
 	//cprintf("now %d and qunt %d\n", p->prior, quantum);
 	switch(p->prior){
 		case 0:
-			if(quantum >= 5){
+			if(quantum > 5){
 				move_MLFQ_prior(1, p);
 			}
 			return 1;
 			break;
 
 		case 1:
-			if(quantum >= 10){
+			if(quantum > 10){
 				move_MLFQ_prior(2, p);
 			}
 			if((quantum % 2) == 0){
@@ -298,6 +298,6 @@ MLFQ_tick_adder(void)
 			break;
 		default:
 			return -1;
-	}		
-	
+	}	
 }
+

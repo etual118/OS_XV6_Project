@@ -106,9 +106,10 @@ trap(struct trapframe *tf)
      tf->trapno == T_IRQ0+IRQ_TIMER){
     //cprintf("time interrupts!\n");
     int tks = MLFQ_tick_adder();
-
+ 
     if(tks == -1){
       cprintf("fatal err\n");
+
     }else if(tks > 0){
       stride_adder(tks);
       yield();

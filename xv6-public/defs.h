@@ -132,7 +132,6 @@ void 			scheduler(void);
 int 			set_cpu_share(int inquire);
 void 			stride_adder(int step);
 int 			MLFQ_tick_adder(void);
-
 // swtch.S
 void            swtch(struct context**, struct context*);
 
