@@ -99,7 +99,7 @@ prior_boost(void)
 		}
 	}
 	release(&ptable.lock);
-	cprintf("[do boosting!]\n");
+	//cprintf("[do boosting!]\n");
 }
 
 struct proc*
@@ -222,7 +222,7 @@ set_cpu_share(int inquire)
 		return -1;
 
 	s_cand[0].share = (100 - sum);
-	s_cand[0].stride = 100000 / s_cand[0].share;
+	s_cand[0].stride = 10000000 / s_cand[0].share;
 	
 
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
@@ -230,7 +230,7 @@ set_cpu_share(int inquire)
 			break;
 	}
 	s->share = inquire;
-	s->stride = 100000 / inquire;
+	s->stride = 10000000 / inquire;
 	s->pass = min_pass;
 	struct proc* p = myproc();
 	s->proc = p;
@@ -261,14 +261,14 @@ MLFQ_tick_adder(void)
 {
 
 	struct proc* p = myproc();
-	
+	if(p->prior ==3)
+		return 1;
 	if(++global_ticks >= 100)
 		prior_boost();
 	int quantum = p->pticks;
 	p->pticks++;
 	
-	if(p->prior ==3)
-		return 1;
+	
 	//cprintf("now %d and qunt %d\n", p->prior, quantum);
 	switch(p->prior){
 		case 0:
