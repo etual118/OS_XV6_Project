@@ -274,8 +274,10 @@ MLFQ_tick_adder(void)
 	struct proc* p = myproc();
 	if(p->prior ==3)
 		return 1;
-	if(++global_ticks >= 100)
+	if(++global_ticks > 100){
+		cprintf("[do boosting!] : %d\n", p->prior);		
 		prior_boost();
+	}
 	int quantum = p->pticks;
 	p->pticks++;
 	
