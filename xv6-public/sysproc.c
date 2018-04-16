@@ -13,9 +13,14 @@ sys_fork(void)
   return fork();
 }
 
+extern int global_ticks;
+
 int
 sys_yield(void)
 {
+  if((myproc()->pticks % 2) == 1){
+    MLFQ_tick_adder();
+  }
   yield();
   return 0;
 }
