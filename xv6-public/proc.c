@@ -7,7 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 
-uint ticks;
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -285,6 +285,8 @@ exit(void)
     pop_MLFQ(curproc);
   }else{
     curproc->myst->valid = 0;
+    s_cand[0].share += curproc->myst->share;
+    s_cand[0].stride = 10000000 / s_cand[0].share;
   }
 
   // Jump into the scheduler, never to return.

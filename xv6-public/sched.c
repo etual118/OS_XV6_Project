@@ -217,7 +217,10 @@ set_cpu_share(int inquire)
 
 	if(inquire <= 0)
 		return -1;
-
+	if(myproc()->myst != s_cand){
+		//cprintf("already share\n");
+		return -1;
+	}
 	struct stride* s;
 	uint min_pass = 400000000;
 	int sum = inquire;
@@ -271,6 +274,7 @@ int
 MLFQ_tick_adder(void)
 {
 	acquire(&ptable.lock);
+	stride_adder(1);
 	struct proc* p = myproc();
 	if(p->prior ==3){
 		release(&ptable.lock);
@@ -278,8 +282,10 @@ MLFQ_tick_adder(void)
 	}
 	
 	global_ticks++;
+	
 	p->pticks++;
 	int quantum = p->pticks;
+	
 	//cprintf("now %d and qunt %d\n", p->prior, quantum);
 	switch(p->prior){
 		case 0:
