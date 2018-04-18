@@ -13,7 +13,7 @@ struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
 struct spinlock tickslock;
 uint ticks;
-extern int global_ticks;
+
 void
 tvinit(void)
 {
@@ -104,7 +104,7 @@ trap(struct trapframe *tf)
   // If interrupts were on while locks held, would need to check nlock.
   if(myproc() && myproc()->state == RUNNING &&
    tf->trapno == T_IRQ0+IRQ_TIMER){
-    
+  // If time quantum is not finished, do not call yield. - project 2   
     if(MLFQ_tick_adder()){
       yield();
     }   

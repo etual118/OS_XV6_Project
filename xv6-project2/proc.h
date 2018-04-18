@@ -54,7 +54,7 @@ struct proc {
   struct stride* myst; 
 };
 
-
+// Per-stride state - project 2
 struct stride {
   int stride;
   int pass;
@@ -63,6 +63,7 @@ struct stride {
   struct proc* proc;
 };
 
+// Feedback Queue per-level of MLFQ - project 2
 struct FQ {
   int total;
   int recent;

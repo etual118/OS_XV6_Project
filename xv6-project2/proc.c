@@ -115,8 +115,8 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
-  push_MLFQ(0, p);
-  p->myst = s_cand;
+  push_MLFQ(0, p); // When process created, it pushed into MLFQ - project 2
+  p->myst = s_cand; // so its scheduler is determined by MLFQ, its stride is s_cand[0] - project 2
   return p;
 }
 
@@ -279,10 +279,11 @@ exit(void)
         wakeup1(initproc);
     }
   }
-
+  // When process exit, it should be poped in MLFQ
   if(curproc->myst == s_cand){
     pop_MLFQ(curproc);
   }else{
+    // If it is run on Stride scheduler, reset Stride share
     curproc->myst->valid = 0;
     s_cand[0].share += curproc->myst->share;
     s_cand[0].stride = 10000000 / s_cand[0].share;

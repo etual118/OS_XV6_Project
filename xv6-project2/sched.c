@@ -7,17 +7,23 @@
 #include "proc.h"
 #include "spinlock.h"
 
+// s_cand is stride candidate
+// Stride scheduler round this array
+// for searching min-pass
 struct stride s_cand[NPROC];
-struct FQ MLFQ_table[3];
 
-int global_ticks;
+// MLFQ table is for run MLFQ scheduler
+struct FQ MLFQ_table[3];
+// use for priority boost
+int MLFQ_ticks;
 struct spinlock gticklock;
 extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 }ptable;
 
-
+// Push process into feedback queue
+// It needs queue level to push
 int
 push_MLFQ(int prior, struct proc* p)
 {
@@ -37,6 +43,7 @@ push_MLFQ(int prior, struct proc* p)
 	return -1;
 }
 
+// Pop process from feedback queue
 int
 pop_MLFQ(struct proc* p)
 {
@@ -53,6 +60,8 @@ pop_MLFQ(struct proc* p)
 	return -1;
 }
 
+// Pop process from one feedback queue
+// Then push it to new level
 int
 move_MLFQ_prior(int prior, struct proc* p)
 {
@@ -62,6 +71,7 @@ move_MLFQ_prior(int prior, struct proc* p)
 	return push_MLFQ(prior, p);
 }
 
+// It picks process from MLFQ
 struct proc*
 pick_MLFQ(void)
 {
@@ -70,11 +80,11 @@ pick_MLFQ(void)
 
 	for(i = 0; i < 3; i++){
 		if(MLFQ_table[i].total == 0){
-			continue;
+			continue; // no process in feedback queue
 		}
-		j = MLFQ_table[i].recent;
+		j = MLFQ_table[i].recent; // like rear in queue structure
 		do{
-			j = (j + 1) % NPROC;
+			j = (j + 1) % NPROC; // pick next to recently picked proc
 			if(MLFQ_table[i].wait[j] != 0 && 
 				MLFQ_table[i].wait[j]->state == RUNNABLE){
 				MLFQ_table[i].recent = j;
@@ -83,9 +93,12 @@ pick_MLFQ(void)
 		}while(j != MLFQ_table[i].recent);
 	}
 	
-	return 0;
+	return 0; // There are no process in MLFQ
 }
 
+
+// MLFQ scheduler boost priority of all
+// process in MLFQ for process executed periodically
 void 
 prior_boost(void)
 {
@@ -96,40 +109,38 @@ prior_boost(void)
 		}
 	}
 	acquire(&gticklock);
-    global_ticks = 0;
+    MLFQ_ticks = 0;
     release(&gticklock);
 	
 	
 }
 
+// Stride schduler
+// pick min_pass stride structure
 struct proc*
 pick_pass(void)
 {
-	///제일 짧은 패스를 고른다.
-	///MLFQ가 뽑혔다면, MLFQ에 의해서 다시 뽑아준다.
 	struct stride* pick = s_cand;
 	struct stride* s;
-	int i = 0;
+	// round stride structure for finding min_pass
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
-		//cprintf("%d -> ", i++);
+		// if stride structure not yet used
 		if(s->valid == 0){
-			//cprintf(" c1 ");
 			continue;
 		}
 		if(s->proc->state != RUNNABLE){
-			//cprintf(" c2 ");
+			// in case not runnable
 			continue;
 		}
-		//cprintf("stride : %d pass : %d\t",s->stride, s->pass);
-		i++;
 		if(s->pass < pick->pass)
 			pick = s;
 	}
-	//cprintf("\n");
-	//if(i == 0) cprintf("no valid stride!\n");
+	// case 1 : min_pass structure is MLFQ
+	// so, MLFQ runs under Stride scheduler
 	if(pick == s_cand){
 		struct proc* mlfq_proc = pick_MLFQ();
-
+		// there are no runnable process in MLFQ
+		// find secondly min stride structure
 		if(mlfq_proc == 0){
 			uint min = 400000000;
 			for(s = &s_cand[1]; s < &s_cand[NPROC]; s++){
@@ -143,23 +154,17 @@ pick_pass(void)
 					pick = s;
 				}
 			}
-			//cprintf("case 1 : stride = %d, pass = %d\n", pick->stride, pick->pass);
+			// return secondly min pass process
 			return pick->proc;
 		}
-
-		//cprintf("case 3 : stride = %d, pass = %d, pri = %d\n", s_cand[0].stride, s_cand[0].pass, mlfq_proc->prior);
 		return mlfq_proc;
 	}
-	//cprintf("case 2 : stride = %d, pass = %d\n", pick->stride, pick->pass);
 	return pick->proc;
 }
-//어떻게 mlfq를 0에????
-//
-////PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
 // Scheduler never returns.  It loops, doing:
-//  - choose a process to run
+//  - choose a process to run by Stride scheduler
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
@@ -183,10 +188,7 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
-
-      
-      ///패스에 의해서 하나를 뽑아야함
-      //cprintf("pick_pass called\n");
+    	// find process by Stride scheduler
       win = pick_pass();
       if(win == 0){
       	cprintf("fatal pick\n");
@@ -195,7 +197,6 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      //cprintf("%d : %s (pid:%d, ticks:%d, state:%d, level:%d)\n", ticks, win->name, win->pid, win->pticks, win->state, win->prior);
       c->proc = win;
       switchuvm(win);
       win->state = RUNNING;
@@ -212,18 +213,20 @@ scheduler(void)
   }
 }
 
+// Call OS for share CPU share
 int
 set_cpu_share(int inquire)
 {	
-
+	// share should be over 0
 	if(inquire <= 0)
 		return -1;
+	// already call this function
 	if(myproc()->myst != s_cand){
-		//cprintf("already share\n");
 		return -1;
 	}
 	struct stride* s;
 	uint min_pass = 400000000;
+	// count all share
 	int sum = inquire;
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
 		if(s->valid == 1){
@@ -233,13 +236,14 @@ set_cpu_share(int inquire)
 		}
 	}
 	sum -= s_cand[0].share;
+	// already over max share
 	if(sum > 80)
 		return -1;
-
+	// set share for MLFQ(min 20)
 	s_cand[0].share = (100 - sum);
 	s_cand[0].stride = 10000000 / s_cand[0].share;
 	
-
+	// find stride structure
 	for(s = s_cand; s < &s_cand[NPROC]; s++){
 		if(s->valid == 0)
 			break;
@@ -248,14 +252,18 @@ set_cpu_share(int inquire)
 	s->stride = 10000000 / inquire;
 	s->pass = min_pass;
 	struct proc* p = myproc();
+	// stride structure and process structure
+	// points each other
 	s->proc = p;
 	p->myst = s;
+	// it runs on stride scheduler
 	pop_MLFQ(p);
 	p->prior = 3;
 	s->valid = 1;
 	return 0;
 }
 
+// add stride to pass
 void
 stride_adder(int step)
 {
@@ -264,6 +272,7 @@ stride_adder(int step)
 	for(i = 0; i < step; i++){
 		s->pass += s->stride;
 	}
+	// for prevent overflow
 	if(s->pass > 300000000){
 		for(s = s_cand; s < &s_cand[NPROC]; s++){
 			s->pass = 0;
@@ -271,29 +280,41 @@ stride_adder(int step)
 	}
 }
 
+// it checks MLFQ_ticks for move level
+// and prior boost
+// function is called by every timer interrupt
+// and sys_yield()
+// return value determine process yield or not
+// for guarantee time quantum
 int
 MLFQ_tick_adder(void)
 {
 	acquire(&ptable.lock);
+	// check stride per ticks
 	stride_adder(1);
 	struct proc* p = myproc();
+	// case 1 : run on stride scheduler process
 	if(p->prior ==3){
 		release(&ptable.lock);
 		return 1;
 	}
+	// case 2 : run on MLFQ scheduler process
 	acquire(&gticklock);
-    global_ticks++;
-    release(&gticklock);
-    p->pticks++;
+  MLFQ_ticks++;
+  release(&gticklock);
+  p->pticks++;
 	int quantum = p->pticks;
 	
-	//cprintf("now %d and qunt %d\n", p->prior, quantum);
+	// when time quantum all consumed
+	// then return value is 1
+	// which mean prior boost and yield
+	// could evoke
 	switch(p->prior){
 		case 0:
 			if(quantum >= 5){
 				move_MLFQ_prior(1, p);
 			}
-			if(global_ticks > 100){	
+			if(MLFQ_ticks > 100){	
 				prior_boost();
 			}
 			release(&ptable.lock);
@@ -305,11 +326,11 @@ MLFQ_tick_adder(void)
 				move_MLFQ_prior(2, p);
 			}
 			if((quantum % 2) == 0){
-				if(global_ticks > 100){	
+				if(MLFQ_ticks > 100){	
 					prior_boost();
 				}
 				release(&ptable.lock);
-				return 2;
+				return 1;
 			}else{
 				release(&ptable.lock);
 				return 0;
@@ -318,11 +339,11 @@ MLFQ_tick_adder(void)
 
 		case 2:
 			if((quantum % 4) == 0){
-				if(global_ticks > 100){
+				if(MLFQ_ticks > 100){
 					prior_boost();
 				}
 				release(&ptable.lock);
-				return 4;
+				return 1;
 			}else{
 				release(&ptable.lock);
 				return 0;

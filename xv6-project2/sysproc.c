@@ -12,13 +12,13 @@ sys_fork(void)
 {
   return fork();
 }
+
 int
 sys_yield(void)
 {
   if(ticks % 2 == 0){
     MLFQ_tick_adder();
-  }
-
+  } // For prevent gaming the scheduler - project 2
   yield();
   return 0;
 }
