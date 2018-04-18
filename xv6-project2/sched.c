@@ -91,14 +91,14 @@ prior_boost(void)
 {
 	global_ticks = 0;
 
-	acquire(&ptable.lock);
-  struct proc* p;
+	
+  	struct proc* p;
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
 		if(p->prior == 0 || p->prior == 1|| p->prior == 2) { 
 			move_MLFQ_prior(0, p);
 		}
 	}
-	release(&ptable.lock);
+	
 	//cprintf("[do boosting!]\n");
 }
 
@@ -201,6 +201,7 @@ scheduler(void)
       win->state = RUNNING;
 
       swtch(&(c->scheduler), win->context);
+      //myproc()->pticks++;
       switchkvm();
       // Process is done running for now.
       // It should have changed its p->state before coming back.
@@ -217,7 +218,10 @@ set_cpu_share(int inquire)
 
 	if(inquire <= 0)
 		return -1;
-
+	if(myproc()->myst != s_cand){
+		//cprintf("already share\n");
+		return -1;
+	}
 	struct stride* s;
 	uint min_pass = 400000000;
 	int sum = inquire;
@@ -270,45 +274,61 @@ stride_adder(int step)
 int
 MLFQ_tick_adder(void)
 {
-
+	acquire(&ptable.lock);
+	stride_adder(1);
 	struct proc* p = myproc();
-	if(p->prior ==3)
+	if(p->prior ==3){
+		release(&ptable.lock);
 		return 1;
-	if(++global_ticks >= 100)
-		prior_boost();
+	}
+	
+	global_ticks++;
+	
 	int quantum = p->pticks;
 	p->pticks++;
-	
-	
 	//cprintf("now %d and qunt %d\n", p->prior, quantum);
 	switch(p->prior){
 		case 0:
-			if(quantum > 5){
+			if(quantum >= 5){
 				move_MLFQ_prior(1, p);
 			}
+			if(global_ticks > 100){	
+				prior_boost();
+			}
+			release(&ptable.lock);
 			return 1;
 			break;
 
 		case 1:
-			if(quantum > 10){
+			if(quantum >= 10){
 				move_MLFQ_prior(2, p);
 			}
 			if((quantum % 2) == 0){
+				if(global_ticks > 100){	
+					prior_boost();
+				}
+				release(&ptable.lock);
 				return 2;
 			}else{
+				release(&ptable.lock);
 				return 0;
 			}
 			break;
 
 		case 2:
 			if((quantum % 4) == 0){
+				if(global_ticks > 100){	
+					prior_boost();
+				}
+				release(&ptable.lock);
 				return 4;
 			}else{
+				release(&ptable.lock);
 				return 0;
 			}
 			break;
 		default:
+			release(&ptable.lock);
 			return -1;
 	}	
 }
-

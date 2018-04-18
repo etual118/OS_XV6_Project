@@ -16,6 +16,11 @@ sys_fork(void)
 int
 sys_yield(void)
 {
+  
+  if(ticks % 2 == 0){
+    MLFQ_tick_adder();
+  }
+
   yield();
   return 0;
 }
