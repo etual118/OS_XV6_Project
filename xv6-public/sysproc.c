@@ -17,8 +17,12 @@ extern uint ticks;
 int
 sys_yield(void)
 {
+<<<<<<< HEAD
   /*
   if(ticks % 2 == 0){
+=======
+  if(ticks % 2 == 1){
+>>>>>>> ab14ba911d8292f9f1a6df347967959f5fd59193
     MLFQ_tick_adder();
   }
   */
