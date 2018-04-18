@@ -1,3 +1,8 @@
+//This is the new scheduler for project 1.
+//It combines Stride scheduler and MFLQ.
+//
+
+
 #include "types.h"
 #include "defs.h"
 #include "param.h"

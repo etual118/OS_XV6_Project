@@ -7,11 +7,10 @@
 #include "proc.h"
 #include "spinlock.h"
 
-
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
-}ptable;
+} ptable;
 
 static struct proc *initproc;
 
@@ -20,10 +19,6 @@ extern void forkret(void);
 extern void trapret(void);
 
 static void wakeup1(void *chan);
-
-
-extern struct stride s_cand[NPROC];
-extern struct FQ MLFQ_table[3];
 
 void
 pinit(void)
@@ -93,6 +88,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -116,8 +112,6 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
-  push_MLFQ(0, p);
-  p->myst = s_cand;
   return p;
 }
 
@@ -128,24 +122,9 @@ userinit(void)
 {
   struct proc *p;
   extern char _binary_initcode_start[], _binary_initcode_size[];
-  struct stride* s;
-  
-  for(s = s_cand; s < &s_cand[NPROC]; s++){
-    s->valid = 0;
-    s->proc = 0;
-  }
-  s_cand[0].valid = 1;
-  int i, j;
-  for(i = 0; i < 3; i++){
-    MLFQ_table[i].total = 0;
-    MLFQ_table[i].recent = 0;
-    for(j = 0; j < NPROC; j++){
-      MLFQ_table[i].wait[j] = 0;
-    }
-  }
 
   p = allocproc();
-  s_cand[0].proc = p;
+  
   initproc = p;
   if((p->pgdir = setupkvm()) == 0)
     panic("userinit: out of memory?");
@@ -159,6 +138,7 @@ userinit(void)
   p->tf->eflags = FL_IF;
   p->tf->esp = PGSIZE;
   p->tf->eip = 0;  // beginning of initcode.S
+
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
 
@@ -281,14 +261,6 @@ exit(void)
     }
   }
 
-  if(curproc->myst == s_cand){
-    pop_MLFQ(curproc);
-  }else{
-    curproc->myst->valid = 0;
-    s_cand[0].share += curproc->myst->share;
-    s_cand[0].stride = 10000000 / s_cand[0].share;
-  }
-
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
   sched();
@@ -339,6 +311,49 @@ wait(void)
   }
 }
 
+//PAGEBREAK: 42
+// Per-CPU process scheduler.
+// Each CPU calls scheduler() after setting itself up.
+// Scheduler never returns.  It loops, doing:
+//  - choose a process to run
+//  - swtch to start running that process
+//  - eventually that process transfers control
+//      via swtch back to the scheduler.
+void
+scheduler(void)
+{
+  struct proc *p;
+  struct cpu *c = mycpu();
+  c->proc = 0;
+  
+  for(;;){
+    // Enable interrupts on this processor.
+    sti();
+
+    // Loop over process table looking for process to run.
+    acquire(&ptable.lock);
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+    }
+    release(&ptable.lock);
+
+  }
+}
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores
@@ -372,7 +387,6 @@ yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
   myproc()->state = RUNNABLE;
-  
   sched();
   release(&ptable.lock);
 }
@@ -425,7 +439,6 @@ sleep(void *chan, struct spinlock *lk)
   p->chan = chan;
   p->state = SLEEPING;
 
-  //cprintf("%d : sched is called by sleep : %s(%d)\n", ticks, p->name, p->pid);
   sched();
 
   // Tidy up.
@@ -511,7 +524,6 @@ procdump(void)
     else
       state = "???";
     cprintf("%d %s %s", p->pid, state, p->name);
-    
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)
