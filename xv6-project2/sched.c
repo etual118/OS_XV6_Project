@@ -89,7 +89,6 @@ pick_MLFQ(void)
 void 
 prior_boost(void)
 {
-        cprintf("gt : %d\n", global_ticks);	
   	struct proc* p;
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
 		if(p->prior == 0 || p->prior == 1|| p->prior == 2) { 
@@ -285,9 +284,9 @@ MLFQ_tick_adder(void)
 	acquire(&gticklock);
     global_ticks++;
     release(&gticklock);
-
+    p->pticks++;
 	int quantum = p->pticks;
-	p->pticks++;
+	
 	//cprintf("now %d and qunt %d\n", p->prior, quantum);
 	switch(p->prior){
 		case 0:

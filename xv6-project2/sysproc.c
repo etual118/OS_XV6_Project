@@ -16,7 +16,6 @@ extern uint global_ticks;
 int
 sys_yield(void)
 {
-  cprintf("SY %d -> lev : %d, ticks : %d gt : %d\n", myproc()->pid, myproc()->prior, myproc()->pticks,global_ticks);
   if(ticks % 2 == 0){
     MLFQ_tick_adder();
   }
