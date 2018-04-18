@@ -89,7 +89,7 @@ pick_MLFQ(void)
 void 
 prior_boost(void)
 {
-	
+        cprintf("gt : %d\n", global_ticks);	
   	struct proc* p;
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
 		if(p->prior == 0 || p->prior == 1|| p->prior == 2) { 
@@ -100,7 +100,6 @@ prior_boost(void)
     global_ticks = 0;
     release(&gticklock);
 	
-	cprintf("[do boosting!] %d\n", global_ticks);
 	
 }
 
