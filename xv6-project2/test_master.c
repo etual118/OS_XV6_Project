@@ -18,7 +18,7 @@ char *child_argv[CNT_CHILD][3] = {
   // Process scheduled by Stride scheduler, use 10% of CPU resources
   {NAME_CHILD_STRIDE, "10", 0},
   // Process scheduled by Stride scheduler, use 40% of CPU resources
-  {NAME_CHILD_STRIDE, "5", 0},
+  {NAME_CHILD_STRIDE, "20", 0},
   // Process scheduled by MLFQ scheduler, does not yield() itself
   {NAME_CHILD_MLFQ, "0", 0},
   // Process scheduled by MLFQ scheduler, frequently yield()
@@ -38,7 +38,7 @@ main(int argc, char *argv[])
       continue;
     } else if (pid == 0) {
       // child
-      int p = i % 4;
+      int p = i % 2 + 2;
       exec(child_argv[p][0], child_argv[p]);
       printf(1, "exec failed!!\n");
       exit();
