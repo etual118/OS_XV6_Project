@@ -12,7 +12,6 @@ sys_fork(void)
 {
   return fork();
 }
-extern uint global_ticks;
 int
 sys_yield(void)
 {
