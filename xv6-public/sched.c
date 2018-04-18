@@ -10,7 +10,7 @@
 struct stride s_cand[NPROC];
 struct FQ MLFQ_table[3];
 
-int global_ticks = 0;
+int global_ticks;
 
 extern struct {
   struct spinlock lock;
@@ -282,14 +282,13 @@ MLFQ_tick_adder(void)
 	}
 	
 	global_ticks++;
-	
-	p->pticks++;
 	int quantum = p->pticks;
-	
+	p->pticks++;
+
 	//cprintf("now %d and qunt %d\n", p->prior, quantum);
 	switch(p->prior){
 		case 0:
-			if(quantum > 5){
+			if(quantum >= 5){
 				move_MLFQ_prior(1, p);
 			}
 			if(global_ticks > 100){	
@@ -300,7 +299,7 @@ MLFQ_tick_adder(void)
 			break;
 
 		case 1:
-			if(quantum > 10){
+			if(quantum >= 10){
 				move_MLFQ_prior(2, p);
 			}
 			if((quantum % 2) == 0){
