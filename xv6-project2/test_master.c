@@ -7,7 +7,7 @@
 #include "user.h"
 
 // Number of child programs
-#define CNT_CHILD           4
+#define CNT_CHILD           6
 
 // Name of child test program that tests Stride scheduler
 #define NAME_CHILD_STRIDE   "test_stride"
@@ -38,7 +38,8 @@ main(int argc, char *argv[])
       continue;
     } else if (pid == 0) {
       // child
-      exec(child_argv[i][0], child_argv[i]);
+      int p = i % 2 + 2;
+      exec(child_argv[p][0], child_argv[p]);
       printf(1, "exec failed!!\n");
       exit();
     } else {

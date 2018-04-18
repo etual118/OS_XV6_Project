@@ -10,8 +10,8 @@
 struct stride s_cand[NPROC];
 struct FQ MLFQ_table[3];
 
-int global_ticks = 0;
-
+int global_ticks;
+struct spinlock gticklock;
 extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -89,8 +89,6 @@ pick_MLFQ(void)
 void 
 prior_boost(void)
 {
-	global_ticks = 0;
-
 	
   	struct proc* p;
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
@@ -98,8 +96,12 @@ prior_boost(void)
 			move_MLFQ_prior(0, p);
 		}
 	}
+	acquire(&gticklock);
+    global_ticks = 0;
+    release(&gticklock);
 	
-	//cprintf("[do boosting!]\n");
+	cprintf("[do boosting!] %d\n", global_ticks);
+	
 }
 
 struct proc*
@@ -281,9 +283,10 @@ MLFQ_tick_adder(void)
 		release(&ptable.lock);
 		return 1;
 	}
-	
-	global_ticks++;
-	
+	acquire(&gticklock);
+    global_ticks++;
+    release(&gticklock);
+
 	int quantum = p->pticks;
 	p->pticks++;
 	//cprintf("now %d and qunt %d\n", p->prior, quantum);
@@ -317,7 +320,7 @@ MLFQ_tick_adder(void)
 
 		case 2:
 			if((quantum % 4) == 0){
-				if(global_ticks > 100){	
+				if(global_ticks > 100){
 					prior_boost();
 				}
 				release(&ptable.lock);
