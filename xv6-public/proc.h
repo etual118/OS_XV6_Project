@@ -37,7 +37,7 @@ enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 // Per-process state
 struct proc {
   uint sz;                     // Size of process memory (bytes)
-  pde_t* pgdir;                // Page table
+  pde_t* pgdir;                // Page tavbbbbb
   char *kstack;                // Bottom of kernel stack for this process
   enum procstate state;        // Process state
   int pid;                     // Process ID
@@ -49,7 +49,26 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  uint prior;                  /// MLFQ priority, when prior is 3 it is stride
+  uint pticks;                 /// pticks for time allotment
+  struct stride* myst; 
 };
+
+
+struct stride {
+  int stride;
+  int pass;
+  int share;
+  int valid;
+  struct proc* proc;
+};
+
+struct FQ {
+  int total;
+  int recent;
+  struct proc* wait[NPROC];
+};
+
 
 // Process memory is laid out contiguously, low addresses first:
 //   text
