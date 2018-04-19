@@ -446,9 +446,25 @@ wakeup1(void *chan)
 {
   struct proc *p;
 
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == SLEEPING && p->chan == chan)
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->state == SLEEPING && p->chan == chan){
       p->state = RUNNABLE;
+      if(p->prior == 3){
+        uint min = 300000000;
+        struct stride *s;
+        for(s = s_cand; s < &s_cand[NPROC]; s++){
+          if(s->valid == 1){
+            if(min > s->pass)
+              min = s->pass;
+          }
+        }
+        if(min > p->myst->pass){
+          p->myst->pass = min;
+        }
+      }
+    }
+  }
+
 }
 
 // Wake up all processes sleeping on chan.
