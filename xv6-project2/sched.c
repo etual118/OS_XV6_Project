@@ -302,9 +302,8 @@ MLFQ_tick_adder(void)
 	acquire(&gticklock);
   MLFQ_ticks++;
   release(&gticklock);
-  p->pticks++;
-	int quantum = p->pticks;
 	
+        int quantum = ++p->pticks;
 	// when time quantum all consumed
 	// then return value is 1
 	// which mean prior boost and yield
