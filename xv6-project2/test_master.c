@@ -7,7 +7,7 @@
 #include "user.h"
 
 // Number of child programs
-#define CNT_CHILD           40
+#define CNT_CHILD           4
 
 // Name of child test program that tests Stride scheduler
 #define NAME_CHILD_STRIDE   "test_stride"
@@ -16,9 +16,9 @@
 
 char *child_argv[CNT_CHILD][3] = {
   // Process scheduled by Stride scheduler, use 10% of CPU resources
-  {NAME_CHILD_STRIDE, "1", 0},
+  {NAME_CHILD_STRIDE, "10", 0},
   // Process scheduled by Stride scheduler, use 40% of CPU resources
-  {NAME_CHILD_STRIDE, "3", 0},
+  {NAME_CHILD_STRIDE, "40", 0},
   // Process scheduled by MLFQ scheduler, does not yield() itself
   {NAME_CHILD_MLFQ, "0", 0},
   // Process scheduled by MLFQ scheduler, frequently yield()
