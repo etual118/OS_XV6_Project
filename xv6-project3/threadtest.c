@@ -46,11 +46,7 @@ int gcnt;
 int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
-  racingtest,
-  basictest,
-  jointest1,
-  jointest2,
-  stresstest,
+
   exittest1,
   exittest2,
   exectest,
@@ -60,13 +56,14 @@ int (*testfunc[NTEST])(void) = {
   sleeptest,
   stridetest1,
   stridetest2,
+  racingtest,
+  basictest,
+  jointest1,
+  jointest2,
+  stresstest,
 };
 char *testname[NTEST] = {
-  "racingtest",
-  "basictest",
-  "jointest1",
-  "jointest2",
-  "stresstest",
+
   "exittest1",
   "exittest2",
   "exectest",
@@ -76,6 +73,11 @@ char *testname[NTEST] = {
   "sleeptest",
   "stridetest1",
   "stridetest2",
+  "racingtest",
+  "basictest",
+  "jointest1",
+  "jointest2",
+  "stresstest",
 };
 
 int
@@ -321,7 +323,6 @@ exittest1(void)
 {
   thread_t threads[NUM_THREAD];
   int i;
-  sleep(10);
   for (i = 0; i < NUM_THREAD; i++){
     printf(1, "fuck %d\n", i);
     if (thread_create(&threads[i], exitthreadmain, (void*)1) != 0){
@@ -329,6 +330,7 @@ exittest1(void)
       return -1;
     }
   }
+  printf("finish allc\n");
   sleep(1);
   return 0;
 }
