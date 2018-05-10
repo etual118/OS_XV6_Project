@@ -114,7 +114,7 @@ sys_thread_join(void)
   if(argint(1, &retval) < 0)
       return -1;
   
-  return thread_join(thread,(void**)retval);
+  return thread_join((thread_t)thread,(void**)retval);
 }
 
 int
