@@ -46,13 +46,13 @@ int gcnt;
 int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
+  exittest1,
+  exittest2,
   racingtest,
   basictest,
   jointest1,
   jointest2,
   stresstest,
-  exittest1,
-  exittest2,
   exectest,
   sbrktest,
   killtest,
