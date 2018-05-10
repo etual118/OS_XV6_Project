@@ -323,7 +323,7 @@ exittest1(void)
   int i;
   sleep(10);
   for (i = 0; i < NUM_THREAD; i++){
-    printf(1, "fuck %d", i);
+    printf(1, "fuck %d\n", i);
     if (thread_create(&threads[i], exitthreadmain, (void*)1) != 0){
       printf(1, "panic at thread_create\n");
       return -1;
