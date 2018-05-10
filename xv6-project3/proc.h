@@ -38,7 +38,6 @@ enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 struct thread {
   struct proc *master;         // Points master thread
   int tid;                     // Thread id
-  
 };
 
 // Per-process state

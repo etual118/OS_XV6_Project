@@ -9,6 +9,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
+struct stride;
 
 // bio.c
 void            binit(void);
@@ -119,7 +120,7 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-	
+
 // sched.c
 void            scheduler(void) __attribute__((noreturn));
 int 			push_MLFQ(int prior, struct proc* p);

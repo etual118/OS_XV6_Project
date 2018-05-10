@@ -271,12 +271,9 @@ set_cpu_share(int inquire)
 
 // add stride to pass
 void
-stride_adder(struct strice *s)
+stride_adder(struct stride *s)
 {
-	int i;
-	for(i = 0; i < step; i++){
-		s->pass += s->stride;
-	}
+	s->pass += s->stride;
 	// for prevent overflow
 	if(s->pass > 300000000){
 		for(s = s_cand; s < &s_cand[NPROC]; s++){

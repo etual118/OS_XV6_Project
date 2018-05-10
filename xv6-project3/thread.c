@@ -59,7 +59,9 @@ found:
   p->context = (struct context*)sp;
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
-  p->parent = p->tinfo.master = master;
+  p->parent = master->parent;
+
+  p->tinfo.master = master;
   p->pgdir = master->pgdir;
   for(i = 0; i < NTHREAD; i++){
     if(master->threads[i] == 0)
@@ -78,7 +80,8 @@ int
 allocstack(struct proc *master, struct proc *new){
 
 	acquire(&pdlock);
-	for(int i = 0; i < NTHREAD; i++){
+	int i;
+	for(i = 0; i < NTHREAD; i++){
 		if(master->dealloc[i] != 0){
 			if((new->sz = allocuvm(master->pgdir, master->dealloc[i],
 			 master->dealloc[i] + 2*PGSIZE)) == 0){
@@ -105,7 +108,8 @@ deallocstack(struct proc *join){
 
 	acquire(&pdlock);
 	kfree(join->kstack);
-	for(int i = 0; i < NTHREAD; i++){
+	int i;
+	for(i = 0; i < NTHREAD; i++){
 		if(join->tinfo.master->dealloc[i] == 0){
 			if((join->tinfo.master->dealloc[i] = deallocuvm(join->pgdir, 
 				join->sz, join->sz - 2*PGSIZE)) == 0){
@@ -126,13 +130,11 @@ int
 thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 	
 	struct proc *thd;
-	struct proc *master = myproc();
+	struct proc *master = call_master();
 	uint t_ustack[3];
 	uint sp;
-	if(master->tinfo.master != 0){
-		master = master->tinfo.master;
-	}
-	if((thd = allocthread(master) == 0)){
+	
+	if((thd = allocthread(master)) == 0){
 		cprintf("case 1 : cannot thread allocating\n");
 		return -1;
 	}
@@ -155,7 +157,7 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 		return -1;
 	
 	thd->tf->esp = sp;
-	*thread = thd->tinfo;
+	*thread = thd;
 
 	acquire(&ptable.lock);
 	thd->state = RUNNABLE;
@@ -166,21 +168,11 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 int
 thread_join(thread_t thread, void **retval){
 
-	struct proc *join;
+	struct proc *join = thread;
 	acquire(&ptable.lock);
-	for(join = ptable.proc; join < &ptable.proc[NPROC]; join++){
-		if(join->tinfo.master == thread.master 
-			&& join->tinfo.tid == thread.tid){
-			goto thdjoin;
-		}
-	}
-	release(&ptable.lock);
-	return -1;
-
-thdjoin:
 	
 	while(join->state != ZOMBIE)
-		sleep(thread.master, &ptable.lock);
+		sleep(thread->tinfo.master, &ptable.lock);
 
 	
 	if(deallocstack(join) < 0){
@@ -189,47 +181,15 @@ thdjoin:
 	}
 	
 	if(retval != 0){
-		*retval = thread.master->ret[join->tinfo.tid];
+		*retval = thread->tinfo.master->ret[join->tinfo.tid];
 	}
 	release(&ptable.lock);
-	thread.master->threads[thread.tid] = 0;
+	thread->tinfo.master->threads[thread->tinfo.tid] = 0;
 	memset(join, 0, sizeof(struct proc));
 	return 0;
 }
 
-void
-thread_exit(void *retval){
 
-	struct proc *curproc = myproc();
-	struct proc *p;
-
-  if(curproc == initproc)
-    panic("init exiting");
-
-  if(curproc->tinfo.master == 0)
-  	exit(); // 예외처리 이렇게 해도되나?
-  	
-
-	acquire(&ptable.lock);
-
-  // Parent might be sleeping in wait().
-  wakeup1(curproc->tinfo.master);
-
-  // Pass abandoned children to init.
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->parent == curproc){
-      p->parent = initproc;
-      if(p->state == ZOMBIE)
-        wakeup1(initproc);
-    }
-  }
-
-  curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
-  curproc->state = ZOMBIE; //How to atomic??
-  curproc->tinfo.master->cnt_t--;
-  sched();
-  panic("zombie exit");
-}
 
 struct proc*
 thread_RR(struct proc* master){
@@ -243,7 +203,7 @@ thread_RR(struct proc* master){
 			master->recent = i;
 			return master->threads[i];
 		}
-	}while(i != master.recent);
+	}while(i != master->recent);
 	
 	return master;
 }

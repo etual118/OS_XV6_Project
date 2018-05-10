@@ -101,7 +101,7 @@ exec(char *path, char **argv)
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
   *master->tf = *curproc->tf;
-  for(int i = 0; i < NTHREAD; i++){
+  for(i = 0; i < NTHREAD; i++){
     if(master->threads[i] != 0)
       master->threads[i]->state = ZOMBIE;
   }

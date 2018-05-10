@@ -25,6 +25,25 @@ extern struct stride s_cand[NPROC];
 extern struct FQ MLFQ_table[3];
 
 void
+thread_exit(void *retval){
+
+  struct proc *curproc = myproc();
+
+  if(curproc->tinfo.master == 0)
+    exit(); // 예외처리 이렇게 해도되나?
+  acquire(&ptable.lock);
+
+  // Parent might be sleeping in wait().
+  wakeup1(curproc->tinfo.master);
+
+  curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
+  curproc->state = ZOMBIE; //How to atomic??
+  curproc->tinfo.master->cnt_t--;
+  sched();
+  panic("zombie exit");
+}
+
+void
 pinit(void)
 {
   initlock(&ptable.lock, "ptable");
@@ -118,7 +137,7 @@ found:
   push_MLFQ(0, p); // When process created, it pushed into MLFQ - project 2
   p->myst = s_cand; // so its scheduler is determined by MLFQ, its stride is s_cand[0] - project 2
   p->tinfo.master = 0;
-  p->tinfo.cnt_t = 0;
+  p->cnt_t = 0;
   return p;
 }
 
@@ -290,7 +309,7 @@ mast:
   // 포크하고 나중에 다시 점검해보기
   // Pass abandoned children to init.
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->parent == master && p->master == 0){
+    if(p->parent == master && p->tinfo.master == 0){
       p->parent = initproc;
       if(p->state == ZOMBIE)
         wakeup1(initproc);
@@ -489,6 +508,7 @@ wakeup1(void *chan)
   }
 
 }
+
 
 // Wake up all processes sleeping on chan.
 void
