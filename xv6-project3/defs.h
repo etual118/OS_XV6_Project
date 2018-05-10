@@ -112,7 +112,6 @@ struct cpu*     mycpu(void);
 struct proc*    myproc();
 void            pinit(void);
 void            procdump(void);
-void            scheduler(void) __attribute__((noreturn));
 void            sched(void);
 void            setproc(struct proc*);
 void            sleep(void*, struct spinlock*);
@@ -122,6 +121,7 @@ void            wakeup(void*);
 void            yield(void);
 	
 // sched.c
+void            scheduler(void) __attribute__((noreturn));
 int 			push_MLFQ(int prior, struct proc* p);
 int 			pop_MLFQ(struct proc* p);
 int 			move_MLFQ_prior(int prior, struct proc* p);
@@ -130,7 +130,7 @@ void 			prior_boost(void);
 struct proc*	pick_pass(void);
 void 			scheduler(void);
 int 			set_cpu_share(int inquire);
-void 			stride_adder(int step);
+void 			stride_adder(struct stride *s);
 int 			MLFQ_tick_adder(void);
 // swtch.S
 void            swtch(struct context**, struct context*);
@@ -178,7 +178,11 @@ extern struct spinlock tickslock;
 
 
 // thread.c
-
+struct proc*	thread_RR(struct proc* master);
+int 			thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg);
+int 			thread_join(thread_t thread, void **retval);
+void			thread_exit(void *retval);
+struct proc*	call_master(void);
 
 // uart.c
 void            uartinit(void);

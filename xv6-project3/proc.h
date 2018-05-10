@@ -34,6 +34,13 @@ struct context {
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+// Thread structuer for each thread
+struct thread {
+  struct proc *master;         // Points master thread
+  int tid;                     // Thread id
+  
+};
+
 // Per-process state
 struct proc {
   uint sz;                     // Size of process memory (bytes)
@@ -52,8 +59,10 @@ struct proc {
   uint prior;                  /// MLFQ priority, when prior is 3 it is stride
   uint pticks;                 /// pticks for time allotment
   struct stride *myst;         // Stride structure pointer
-  struct thread *tinfo;
+  struct thread tinfo;
   // Below this for master thread
+  void* ret[NTHREAD];          // Thread's return value
+  int dealloc[NTHREAD];        // deallocated size of stack
   int cnt_t;                   // Number of thread except master
   int recent;                  // For pick thread in Round-Robin
   struct proc* threads[NTHREAD];// Array of thread for Round-Robin
@@ -75,11 +84,7 @@ struct FQ {
   struct proc* wait[NPROC];
 };
 
-// Thread structuer for each thread
-struct thread {
-  struct proc *master;         // Points master thread
-  int tid;                // Thread id
-};
+
 
 // Process memory is laid out contiguously, low addresses first:
 //   text

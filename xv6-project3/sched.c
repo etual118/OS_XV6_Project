@@ -86,7 +86,8 @@ pick_MLFQ(void)
 		do{
 			j = (j + 1) % NPROC; // pick next to recently picked proc
 			if(MLFQ_table[i].wait[j] != 0 && 
-				MLFQ_table[i].wait[j]->state == RUNNABLE){
+				(MLFQ_table[i].wait[j]->state == RUNNABLE || 
+					MLFQ_table[i].wait[j]->cnt_t > 0)){ // master thread waits for thread
 				MLFQ_table[i].recent = j;
 				return MLFQ_table[i].wait[j];
 			}
@@ -128,10 +129,13 @@ pick_pass(void)
 		if(s->valid == 0){
 			continue;
 		}
+		if(s->proc->cnt_t > 0)
+			goto master;
 		if(s->proc->state != RUNNABLE){
 			// in case not runnable
 			continue;
 		}
+master:
 		if(s->pass < pick->pass)
 			pick = s;
 	}
@@ -155,11 +159,11 @@ pick_pass(void)
 				}
 			}
 			// return secondly min pass process
-			return pick->proc;
+			return thread_RR(pick->proc);
 		}
-		return mlfq_proc;
+		return thread_RR(mlfq_proc);
 	}
-	return pick->proc;
+	return thread_RR(pick->proc);
 }
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -217,11 +221,14 @@ scheduler(void)
 int
 set_cpu_share(int inquire)
 {	
+	struct proc* p = myproc();
+	if(p->tinfo.master != 0)
+		p = p->tinfo.master;
 	// share should be over 0
 	if(inquire <= 0)
 		return -1;
 	// already call this function
-	if(myproc()->myst != s_cand){
+	if(p->myst != s_cand){
 		return -1;
 	}
 	struct stride* s;
@@ -251,7 +258,6 @@ set_cpu_share(int inquire)
 	s->share = inquire;
 	s->stride = 10000000 / inquire;
 	s->pass = min_pass;
-	struct proc* p = myproc();
 	// stride structure and process structure
 	// points each other
 	s->proc = p;
@@ -265,9 +271,8 @@ set_cpu_share(int inquire)
 
 // add stride to pass
 void
-stride_adder(int step)
+stride_adder(struct strice *s)
 {
-	struct stride* s = myproc()->myst;
 	int i;
 	for(i = 0; i < step; i++){
 		s->pass += s->stride;
@@ -290,9 +295,12 @@ int
 MLFQ_tick_adder(void)
 {
 	acquire(&ptable.lock);
-	// check stride per ticks
-	stride_adder(1);
 	struct proc* p = myproc();
+	if(p->tinfo.master != 0)
+		p = p->tinfo.master;
+	struct stride *s = p->myst;
+	// check stride per ticks
+	stride_adder(s);
 	// case 1 : run on stride scheduler process
 	if(p->prior ==3){
 		release(&ptable.lock);

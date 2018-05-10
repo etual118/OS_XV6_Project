@@ -18,6 +18,7 @@ exec(char *path, char **argv)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
+  struct proc *master = call_master();
 
   begin_op();
 
@@ -94,12 +95,17 @@ exec(char *path, char **argv)
   safestrcpy(curproc->name, last, sizeof(curproc->name));
 
   // Commit to the user image.
-  oldpgdir = curproc->pgdir;
-  curproc->pgdir = pgdir;
-  curproc->sz = sz;
+  oldpgdir = master->pgdir;
+  master->pgdir = pgdir;
+  master->sz = sz;
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
-  switchuvm(curproc);
+  *master->tf = *curproc->tf;
+  for(int i = 0; i < NTHREAD; i++){
+    if(master->threads[i] != 0)
+      master->threads[i]->state = ZOMBIE;
+  }
+  switchuvm(master);
   freevm(oldpgdir);
   return 0;
 

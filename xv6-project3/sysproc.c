@@ -7,6 +7,8 @@
 #include "mmu.h"
 #include "proc.h"
 
+
+
 int
 sys_fork(void)
 {
@@ -74,6 +76,48 @@ sys_set_cpu_share(void)
 }
 
 int
+sys_thread_create(void)
+{
+  int thread, start_routine, arg;
+
+  if(argint(0, &thread) < 0)
+      return -1;
+  
+  if(argint(1, &start_routine) < 0)
+      return -1;
+  
+  if(argint(2, &arg) < 0)
+      return -1;
+  
+  return thread_create((thread_t*)thread, (void*)start_routine, (void*)arg);
+}
+
+int
+sys_thread_exit(void)
+{
+  int retval;
+  if(argint(0, &retval) < 0)
+      return -1;
+
+  thread_exit((void*)retval);
+  return 0;
+}
+
+int
+sys_thread_join(void)
+{
+  int thread, retval;
+  
+  if(argint(0, &thread) < 0)
+      return -1;
+
+  if(argint(1, &retval) < 0)
+      return -1;
+  
+  return thread_join((thread_t)thread,(void**)retval);
+}
+
+int
 sys_sbrk(void)
 {
   int addr;
@@ -81,7 +125,7 @@ sys_sbrk(void)
 
   if(argint(0, &n) < 0)
     return -1;
-  addr = myproc()->sz;
+  addr = call_master()->sz;
   if(growproc(n) < 0)
     return -1;
   return addr;

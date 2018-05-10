@@ -117,7 +117,8 @@ found:
 
   push_MLFQ(0, p); // When process created, it pushed into MLFQ - project 2
   p->myst = s_cand; // so its scheduler is determined by MLFQ, its stride is s_cand[0] - project 2
-  p->tinfo->master = 0;
+  p->tinfo.master = 0;
+  p->tinfo.cnt_t = 0;
   return p;
 }
 
@@ -179,7 +180,7 @@ int
 growproc(int n)
 {
   uint sz;
-  struct proc *curproc = myproc();
+  struct proc *curproc = call_master();
 
   sz = curproc->sz;
   if(n > 0){
@@ -250,48 +251,69 @@ exit(void)
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
-
+  struct proc *master = call_master();
   if(curproc == initproc)
     panic("init exiting");
+  int i;
 
   // Close all open files.
-  for(fd = 0; fd < NOFILE; fd++){
-    if(curproc->ofile[fd]){
-      fileclose(curproc->ofile[fd]);
-      curproc->ofile[fd] = 0;
+  for(i = 0; i <= NTHREAD; i++){
+    if(i == NTHREAD){
+      curproc = master;
+      goto mast;
     }
+    if(master->threads[i] == 0){
+      continue;
+    }else{
+      curproc = master->threads[i];
+    }
+mast:
+    for(fd = 0; fd < NOFILE; fd++){
+      if(curproc->ofile[fd]){
+        fileclose(curproc->ofile[fd]);
+        curproc->ofile[fd] = 0;
+      }
+    }
+
+    begin_op();
+    iput(curproc->cwd);
+    end_op();
+    curproc->cwd = 0;
   }
 
-  begin_op();
-  iput(curproc->cwd);
-  end_op();
-  curproc->cwd = 0;
 
   acquire(&ptable.lock);
 
   // Parent might be sleeping in wait().
-  wakeup1(curproc->parent);
+  wakeup1(master->parent);
 
+  // 포크하고 나중에 다시 점검해보기
   // Pass abandoned children to init.
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->parent == curproc){
+    if(p->parent == master && p->master == 0){
       p->parent = initproc;
       if(p->state == ZOMBIE)
         wakeup1(initproc);
     }
   }
+
+  for(i = 0; i < NTHREAD; i++){
+    if(master->threads[i] != 0){
+      master->threads[i]->state = ZOMBIE;
+    }
+  }
   // When process exit, it should be poped in MLFQ
-  if(curproc->myst == s_cand){
-    pop_MLFQ(curproc);
+  if(master->myst == s_cand){
+    pop_MLFQ(master);
   }else{
     // If it is run on Stride scheduler, reset Stride share
-    curproc->myst->valid = 0;
-    s_cand[0].share += curproc->myst->share;
+    master->myst->valid = 0;
+    s_cand[0].share += master->myst->share;
     s_cand[0].stride = 10000000 / s_cand[0].share;
   }
 
   // Jump into the scheduler, never to return.
-  curproc->state = ZOMBIE;
+  master->state = ZOMBIE;
   sched();
   panic("zombie exit");
 }
