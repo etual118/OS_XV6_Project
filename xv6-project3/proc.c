@@ -35,10 +35,20 @@ thread_exit(void *retval){
 
   // Parent might be sleeping in wait().
   wakeup1(curproc->tinfo.master);
+  struct proc *p;
+
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->parent == curproc){
+      p->parent = initproc;
+      if(p->state == ZOMBIE)
+        wakeup1(initproc);
+    }
+  }  
 
   curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
   curproc->state = ZOMBIE; //How to atomic??
   curproc->tinfo.master->cnt_t--;
+  cprintf("here\n");
   sched();
   panic("zombie exit");
 }
