@@ -62,13 +62,13 @@ int (*testfunc[NTEST])(void) = {
   stridetest2,
 };
 char *testname[NTEST] = {
+  "exittest1",
+  "exittest2",
   "racingtest",
   "basictest",
   "jointest1",
   "jointest2",
   "stresstest",
-  "exittest1",
-  "exittest2",
   "exectest",
   "sbrktest",
   "killtest",
