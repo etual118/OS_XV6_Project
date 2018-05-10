@@ -321,7 +321,7 @@ exittest1(void)
 {
   thread_t threads[NUM_THREAD];
   int i;
-  
+  sleep(10);
   for (i = 0; i < NUM_THREAD; i++){
     printf(1, "fuck %d", i);
     if (thread_create(&threads[i], exitthreadmain, (void*)1) != 0){
