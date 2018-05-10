@@ -46,6 +46,13 @@ int gcnt;
 int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
+  racingtest,
+  basictest,
+  jointest1,
+  jointest2,
+  stresstest,
+  exittest1,
+  exittest2,
   exectest,
   sbrktest,
   killtest,
@@ -53,15 +60,15 @@ int (*testfunc[NTEST])(void) = {
   sleeptest,
   stridetest1,
   stridetest2,
-  exittest1,
-  exittest2,
-  racingtest,
-  basictest,
-  jointest1,
-  jointest2,
-  stresstest,
 };
 char *testname[NTEST] = {
+  "racingtest",
+  "basictest",
+  "jointest1",
+  "jointest2",
+  "stresstest",
+  "exittest1",
+  "exittest2",
   "exectest",
   "sbrktest",
   "killtest",
@@ -69,13 +76,6 @@ char *testname[NTEST] = {
   "sleeptest",
   "stridetest1",
   "stridetest2",
-  "exittest1",
-  "exittest2",
-  "racingtest",
-  "basictest",
-  "jointest1",
-  "jointest2",
-  "stresstest",
 };
 
 int
@@ -304,6 +304,7 @@ void*
 exitthreadmain(void *arg)
 {
   int i;
+  printf(1, "its ok\n");
   if ((int)arg == 1){
     while(1){
       printf(1, "thread_exit ...\n");
@@ -320,10 +321,9 @@ exittest1(void)
 {
   thread_t threads[NUM_THREAD];
   int i;
-  printf(1, "exit 1\n");
   
   for (i = 0; i < NUM_THREAD; i++){
-    printf(1, "%d start\n",i);
+    printf(1, "fuck %d", i);
     if (thread_create(&threads[i], exitthreadmain, (void*)1) != 0){
       printf(1, "panic at thread_create\n");
       return -1;
