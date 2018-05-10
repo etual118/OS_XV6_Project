@@ -26,13 +26,13 @@ extern struct FQ MLFQ_table[3];
 
 void
 thread_exit(void *retval){
-
+  cprintf("here1\n");
   struct proc *curproc = myproc();
 
   if(curproc->tinfo.master == 0)
     exit(); // 예외처리 이렇게 해도되나?
   acquire(&ptable.lock);
-
+  cprintf("here2\n");
   // Parent might be sleeping in wait().
   wakeup1(curproc->tinfo.master);
   struct proc *p;
