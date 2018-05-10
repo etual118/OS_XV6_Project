@@ -330,7 +330,7 @@ exittest1(void)
       return -1;
     }
   }
-  printf("finish allc\n");
+  printf(1,"finish allc\n");
   sleep(1);
   return 0;
 }
