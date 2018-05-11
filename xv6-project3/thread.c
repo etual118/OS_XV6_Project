@@ -135,15 +135,12 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 	uint t_ustack[3];
 	uint sp;
 	
-	if((thd = allocthread(master)) == 0){
-		cprintf("case 1 : cannot thread allocating\n");
+	if((thd = allocthread(master)) == 0)
 		return -1;
-	}
-
-	if(allocstack(master, thd) < 0){
-		cprintf("case 2 : cannot thread allocating\n");
+	
+	if(allocstack(master, thd) < 0)
 		return -1;
-	}
+	
 	int i;
   for(i = 0; i < NOFILE; i++)
     if(master->ofile[i])
@@ -154,7 +151,6 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
     
 
 	*thd->tf = *master->tf;
-	thd->tf->eax = 0;
 	thd->tf->eip = (uint)start_routine;
 	sp = thd->sz;
 	// void ptr를 어떻게 처리해야하나?
@@ -190,17 +186,54 @@ thread_join(thread_t thread, void **retval){
 		return -1;
 	}
 	
-	if(retval != 0){
+	if(retval != 0)
 		*retval = thread->tinfo.master->ret[join->tinfo.tid];
-	}
+	
 	release(&ptable.lock);
 	thread->tinfo.master->threads[thread->tinfo.tid] = 0;
-	//memset(join, 0, sizeof(struct proc));
 	thread->state = UNUSED;
 	thread->kstack = 0;
   thread->name[0] = 0;
   thread->killed = 0;
 	return 0;
+}
+
+void
+thread_exit(void *retval){
+  struct proc *curproc = myproc();
+  int fd;
+  if(curproc->tinfo.master == 0)
+    exit(); 
+
+  for(fd = 0; fd < NOFILE; fd++){
+    if(curproc->ofile[fd]){
+      fileclose(curproc->ofile[fd]);
+      curproc->ofile[fd] = 0;
+    }
+  }
+
+  begin_op();
+  iput(curproc->cwd);
+  end_op();
+  curproc->cwd = 0;
+  acquire(&ptable.lock);
+  // Parent might be sleeping in wait().
+  wakeup1(curproc->tinfo.master);
+  struct proc *p;
+
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->parent == curproc){
+      p->parent = initproc;
+      if(p->state == ZOMBIE)
+        wakeup1(initproc);
+    }
+  }  
+
+  curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
+  curproc->state = ZOMBIE; 
+  curproc->tinfo.master->cnt_t--;
+  sched();
+  panic("zombie thread exit");
 }
 
 

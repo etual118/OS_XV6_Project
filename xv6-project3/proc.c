@@ -18,50 +18,10 @@ int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
 
-static void wakeup1(void *chan);
-
-
 extern struct stride s_cand[NPROC];
 extern struct FQ MLFQ_table[3];
 extern struct spinlock pdlock;
 
-void
-thread_exit(void *retval){
-  struct proc *curproc = myproc();
-  int fd;
-  if(curproc->tinfo.master == 0)
-    exit(); // 예외처리 이렇게 해도되나?
-
-  for(fd = 0; fd < NOFILE; fd++){
-    if(curproc->ofile[fd]){
-      fileclose(curproc->ofile[fd]);
-      curproc->ofile[fd] = 0;
-    }
-  }
-
-  begin_op();
-  iput(curproc->cwd);
-  end_op();
-  curproc->cwd = 0;
-  acquire(&ptable.lock);
-  // Parent might be sleeping in wait().
-  wakeup1(curproc->tinfo.master);
-  struct proc *p;
-
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->parent == curproc){
-      p->parent = initproc;
-      if(p->state == ZOMBIE)
-        wakeup1(initproc);
-    }
-  }  
-
-  curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
-  curproc->state = ZOMBIE; //How to atomic??
-  curproc->tinfo.master->cnt_t--;
-  sched();
-  panic("zombie exit");
-}
 
 void
 pinit(void)
@@ -542,13 +502,11 @@ wakeup1(void *chan)
               min = s->pass;
           }
         }
-        if(min > p->myst->pass){
+        if(min > p->myst->pass)
           p->myst->pass = min;
-        }
       }
     }
   }
-
 }
 
 
