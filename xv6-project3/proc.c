@@ -28,9 +28,21 @@ extern struct spinlock pdlock;
 void
 thread_exit(void *retval){
   struct proc *curproc = myproc();
-
+  int fd;
   if(curproc->tinfo.master == 0)
     exit(); // 예외처리 이렇게 해도되나?
+
+  for(fd = 0; fd < NOFILE; fd++){
+    if(curproc->ofile[fd]){
+      fileclose(curproc->ofile[fd]);
+      curproc->ofile[fd] = 0;
+    }
+  }
+
+  begin_op();
+  iput(curproc->cwd);
+  end_op();
+  curproc->cwd = 0;
   acquire(&ptable.lock);
   // Parent might be sleeping in wait().
   wakeup1(curproc->tinfo.master);
