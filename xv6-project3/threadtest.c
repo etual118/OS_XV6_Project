@@ -582,9 +582,9 @@ stridethreadmain(void *arg)
   int *flag = (int*)arg;
   int t;
   while(*flag){
-    //printf(1,"out %d\n", *flag);
+    printf(1,"out %d\n", *flag);
     while(*flag == 1){
-      //printf(1,"in %d\n", *flag);
+      printf(1,"in %d\n", *flag);
       for (t = 0; t < 5; t++);
       //__sync_fetch_and_add(&gcnt, 1);
     }
