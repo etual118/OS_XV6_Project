@@ -1,6 +1,7 @@
 #include "types.h"
 #include "stat.h"
 #include "user.h"
+#include "unistd.h"
 
 #define NUM_THREAD 10
 #define NTEST 14
@@ -176,6 +177,7 @@ basicthreadmain(void *arg)
       printf(1, "%d", tid);
     }
   }
+  sleep(1);
   thread_exit((void *)(tid+1));
 }
 
