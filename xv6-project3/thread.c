@@ -189,7 +189,7 @@ thread_join(thread_t thread, void **retval){
 	cprintf("%d's get retval!\n", thread->tinfo.tid);
 	release(&ptable.lock);
 	thread->tinfo.master->threads[thread->tinfo.tid] = 0;
-	//memset(join, 0, sizeof(struct proc));
+	memset(join, 0, sizeof(struct proc));
 	return 0;
 }
 
