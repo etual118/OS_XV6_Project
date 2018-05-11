@@ -46,7 +46,12 @@ int gcnt;
 int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
-   exittest1,
+  racingtest,
+  basictest,
+  jointest1,
+  jointest2,
+  stresstest,
+  exittest1,
   exittest2,
   exectest,
   sbrktest,
@@ -55,14 +60,13 @@ int (*testfunc[NTEST])(void) = {
   sleeptest,
   stridetest1,
   stridetest2,
-    racingtest,
-  basictest,
-  jointest1,
-  jointest2,
-  stresstest,
- 
 };
 char *testname[NTEST] = {
+  "racingtest",
+  "basictest",
+  "jointest1",
+  "jointest2",
+  "stresstest",
   "exittest1",
   "exittest2",
   "exectest",
@@ -72,12 +76,6 @@ char *testname[NTEST] = {
   "sleeptest",
   "stridetest1",
   "stridetest2",
-    "racingtest",
-  "basictest",
-  "jointest1",
-  "jointest2",
-  "stresstest",
-  
 };
 
 int
@@ -178,7 +176,6 @@ basicthreadmain(void *arg)
       printf(1, "%d", tid);
     }
   }
-  sleep(1);
   thread_exit((void *)(tid+1));
 }
 
