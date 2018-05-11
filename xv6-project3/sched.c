@@ -150,9 +150,11 @@ master:
 			for(s = &s_cand[1]; s < &s_cand[NPROC]; s++){
 				if(s->valid == 0)
 					continue;
+				if(s->proc->cnt_t > 0)
+					goto mas;
 				if(s->proc->state != RUNNABLE)
 					continue;
-				
+mas:				
 				if(s->pass < min){
 					min = s->pass;
 					pick = s;
