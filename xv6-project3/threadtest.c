@@ -47,8 +47,8 @@ int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
 
-  stridetest1,
   stridetest2,
+  stridetest1,
     racingtest,
   basictest,
   jointest1,
@@ -64,8 +64,8 @@ int (*testfunc[NTEST])(void) = {
 };
 char *testname[NTEST] = {
 
-  "stridetest1",
   "stridetest2",
+  "stridetest1",
     "racingtest",
   "basictest",
   "jointest1",
