@@ -23,7 +23,7 @@ static void wakeup1(void *chan);
 
 extern struct stride s_cand[NPROC];
 extern struct FQ MLFQ_table[3];
-
+extern struct spinlock pdlock;
 void
 thread_exit(void *retval){
   struct proc *curproc = myproc();
@@ -208,7 +208,7 @@ growproc(int n)
 {
   uint sz;
   struct proc *curproc = call_master();
-
+  acquire(&pdlock);
   sz = curproc->sz;
   if(n > 0){
     if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
@@ -218,6 +218,7 @@ growproc(int n)
       return -1;
   }
   curproc->sz = sz;
+  release(&pdlock);
   switchuvm(curproc);
   return 0;
 }
