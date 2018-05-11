@@ -221,6 +221,7 @@ jointest1(void)
   void *retval;
   
   for (i = 1; i <= NUM_THREAD; i++){
+
     if (thread_create(&threads[i-1], jointhreadmain, (void*)i) != 0){
       printf(1, "panic at thread_create\n");
       return -1;
@@ -228,6 +229,7 @@ jointest1(void)
   }
   printf(1, "thread_join!!!\n");
   for (i = 1; i <= NUM_THREAD; i++){
+    printf(1, "join %d", i - 1);
     if (thread_join(threads[i-1], &retval) != 0 || (int)retval != i * 2 ){
       printf(1, "panic at thread_join\n");
       return -1;
