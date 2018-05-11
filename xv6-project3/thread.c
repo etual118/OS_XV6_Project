@@ -144,12 +144,13 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 		cprintf("case 2 : cannot thread allocating\n");
 		return -1;
 	}
+	int i;
   for(i = 0; i < NOFILE; i++)
     if(master->ofile[i])
         thd->ofile[i] = filedup(master->ofile[i]);
   thd->cwd = idup(master->cwd);
     
-  safestrcpy(nt->name, master->name, sizeof(master->name));
+  safestrcpy(thd->name, master->name, sizeof(master->name));
     
 
 	*thd->tf = *master->tf;
