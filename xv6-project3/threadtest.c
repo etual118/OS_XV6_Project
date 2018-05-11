@@ -305,6 +305,7 @@ stresstest(void)
 void*
 exitthreadmain(void *arg)
 {
+  printf(1, "call\n");
   int i;
   if ((int)arg == 1){
     while(1){

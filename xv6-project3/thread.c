@@ -172,7 +172,7 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 	acquire(&ptable.lock);
 	thd->state = RUNNABLE;
 	release(&ptable.lock);
-	cprintf("now %d is ready\n", thd->tinfo.tid);
+	//cprintf("now %d is ready\n", thd->tinfo.tid);
 	return 0;
 }
 
@@ -200,8 +200,8 @@ thread_join(thread_t thread, void **retval){
 	//memset(join, 0, sizeof(struct proc));
 	thread->state = UNUSED;
 	thread->kstack = 0;
-    thread->name[0] = 0;
-    thread->killed = 0;
+  thread->name[0] = 0;
+  thread->killed = 0;
 	return 0;
 }
 
