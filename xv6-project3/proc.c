@@ -24,6 +24,7 @@ static void wakeup1(void *chan);
 extern struct stride s_cand[NPROC];
 extern struct FQ MLFQ_table[3];
 extern struct spinlock pdlock;
+
 void
 thread_exit(void *retval){
   struct proc *curproc = myproc();
