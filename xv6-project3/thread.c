@@ -172,7 +172,6 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 	acquire(&ptable.lock);
 	thd->state = RUNNABLE;
 	release(&ptable.lock);
-	cprintf("now %d is ready\n", thd->tinfo.tid);
 	return 0;
 }
 
@@ -194,7 +193,6 @@ thread_join(thread_t thread, void **retval){
 	if(retval != 0){
 		*retval = thread->tinfo.master->ret[join->tinfo.tid];
 	}
-	cprintf("%d's get retval!\n", thread->tinfo.tid);
 	release(&ptable.lock);
 	thread->tinfo.master->threads[thread->tinfo.tid] = 0;
 	//memset(join, 0, sizeof(struct proc));

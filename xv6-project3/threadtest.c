@@ -46,10 +46,7 @@ int gcnt;
 int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
-
-  stridetest2,
-  stridetest1,
-    racingtest,
+  racingtest,
   basictest,
   jointest1,
   jointest2,
@@ -61,12 +58,11 @@ int (*testfunc[NTEST])(void) = {
   killtest,
   pipetest,
   sleeptest,
+  stridetest1,
+  stridetest2,
 };
 char *testname[NTEST] = {
-
-  "stridetest2",
-  "stridetest1",
-    "racingtest",
+  "racingtest",
   "basictest",
   "jointest1",
   "jointest2",
@@ -78,6 +74,8 @@ char *testname[NTEST] = {
   "killtest",
   "pipetest",
   "sleeptest",
+  "stridetest1",
+  "stridetest2",
 };
 
 int
@@ -582,14 +580,11 @@ stridethreadmain(void *arg)
   int *flag = (int*)arg;
   int t;
   while(*flag){
-    //printf(1,"out %d\n", *flag);
     while(*flag == 1){
-      //printf(1,"in %d\n", *flag);
       for (t = 0; t < 5; t++);
-      //__sync_fetch_and_add(&gcnt, 1);
+      __sync_fetch_and_add(&gcnt, 1);
     }
   }
-  //printf(1,"im fin\n");
   thread_exit(0);
 }
 
@@ -620,12 +615,9 @@ stridetest1(void)
     }
   }
   flag = 1;
-  //printf(1, "create fin %d\n", pid);
   sleep(500);
-  //printf(1, "sleep fin %d\n", pid);
   flag = 0;
   for (i = 0; i < NUM_THREAD; i++){
-    //printf(1, "call join %d's %d\n", pid, i);
     if (thread_join(threads[i], &retval) != 0){
       printf(1, "panic at thread_join\n");
       return -1;

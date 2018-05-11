@@ -59,7 +59,6 @@ thread_exit(void *retval){
   curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
   curproc->state = ZOMBIE; //How to atomic??
   curproc->tinfo.master->cnt_t--;
-  cprintf("here i am %d and master %d %d\n", curproc->tinfo.tid,curproc->tinfo.master->pid, curproc->tinfo.master->cnt_t);
   sched();
   panic("zombie exit");
 }
