@@ -292,9 +292,7 @@ int
 MLFQ_tick_adder(void)
 {
 	acquire(&ptable.lock);
-	struct proc* p = myproc();
-	if(p->tinfo.master != 0)
-		p = p->tinfo.master;
+	struct proc* p = call_master();
 	struct stride *s = p->myst;
 	// check stride per ticks
 	stride_adder(s);

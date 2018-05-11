@@ -63,6 +63,7 @@ found:
 
   p->tinfo.master = master;
   p->pgdir = master->pgdir;
+
   for(i = 0; i < NTHREAD; i++){
     if(master->threads[i] == 0)
       break;
@@ -145,6 +146,7 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 	}
 
 	*thd->tf = *master->tf;
+	thd->tf->eax = 0;
 	thd->tf->eip = (uint)start_routine;
 	sp = thd->sz;
 	// void ptr를 어떻게 처리해야하나?

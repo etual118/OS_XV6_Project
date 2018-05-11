@@ -46,36 +46,36 @@ int gcnt;
 int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
-    sbrktest,
+  racingtest,
+  basictest,
+  jointest1,
+  jointest2,
+  stresstest,
+  exittest1,
+  exittest2,
+  exectest,
+  sbrktest,
   killtest,
   pipetest,
   sleeptest,
   stridetest1,
   stridetest2,
-  racingtest,
-  basictest,
-  stresstest,
-    jointest1,
-  jointest2,
-  exittest1,
-  exittest2,
-  exectest,
 };
 char *testname[NTEST] = {
-    "sbrktest",
+  "racingtest",
+  "basictest",
+  "jointest1",
+  "jointest2",
+  "stresstest",
+  "exittest1",
+  "exittest2",
+  "exectest",
+  "sbrktest",
   "killtest",
   "pipetest",
   "sleeptest",
   "stridetest1",
   "stridetest2",
-  "racingtest",
-  "basictest",
-  "stresstest",
-    "jointest1",
-  "jointest2",
-  "exittest1",
-  "exittest2",
-  "exectest",
 };
 
 int
@@ -221,7 +221,6 @@ jointest1(void)
   void *retval;
   
   for (i = 1; i <= NUM_THREAD; i++){
-
     if (thread_create(&threads[i-1], jointhreadmain, (void*)i) != 0){
       printf(1, "panic at thread_create\n");
       return -1;
@@ -305,7 +304,6 @@ void*
 exitthreadmain(void *arg)
 {
   int i;
-  printf(1, "its ok\n");
   if ((int)arg == 1){
     while(1){
       printf(1, "thread_exit ...\n");
@@ -322,14 +320,13 @@ exittest1(void)
 {
   thread_t threads[NUM_THREAD];
   int i;
+  
   for (i = 0; i < NUM_THREAD; i++){
-    printf(1, "fuck %d\n", i);
     if (thread_create(&threads[i], exitthreadmain, (void*)1) != 0){
       printf(1, "panic at thread_create\n");
       return -1;
     }
   }
-  printf(1,"finish allc\n");
   sleep(1);
   return 0;
 }
