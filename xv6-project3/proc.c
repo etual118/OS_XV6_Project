@@ -159,6 +159,12 @@ found:
   p->myst = s_cand; // so its scheduler is determined by MLFQ, its stride is s_cand[0] - project 2
   p->tinfo.master = 0;
   p->cnt_t = 0;
+  int i;
+  for(i = 0; i < NTHREAD; i++){
+    p->ret[i] = 0;
+    p->dealloc[i] = 0;
+    p->threads[i] = 0;
+  }
   return p;
 }
 
@@ -373,10 +379,24 @@ wait(void)
     // Scan through table looking for exited children.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != curproc)
+      if(p->parent != curproc||p->master != 0)
         continue;
       havekids = 1;
       if(p->state == ZOMBIE){
+        int i;
+        for(i = 0; i < NTHREAD; i++){
+          if(p->threads[i] != 0){
+            kfree(p->threads[i]->kstack);
+            p->threads[i]->kstack = 0;
+            p->threads[i]->pid = 0;
+            p->threads[i]->parent = 0;
+            p->threads[i]->name[0] = 0;
+            p->threads[i]->killed = 0;
+            p->threads[i]->state = UNUSED;
+          }
+        }
+
+
         // Found one.
         pid = p->pid;
         kfree(p->kstack);
