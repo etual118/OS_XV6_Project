@@ -622,6 +622,7 @@ stridetest1(void)
   printf(1, "sleep fin %d\n", pid);
   flag = 0;
   for (i = 0; i < NUM_THREAD; i++){
+    printf(1, "call join %d's %d\n", pid, i);
     if (thread_join(threads[i], &retval) != 0){
       printf(1, "panic at thread_join\n");
       return -1;
