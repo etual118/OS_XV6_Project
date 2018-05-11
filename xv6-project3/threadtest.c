@@ -1,7 +1,6 @@
 #include "types.h"
 #include "stat.h"
 #include "user.h"
-#include "unistd.h"
 
 #define NUM_THREAD 10
 #define NTEST 14
@@ -130,6 +129,7 @@ void nop(){ }
 void*
 racingthreadmain(void *arg)
 {
+  printf(1,"ff\n");
   int tid = (int) arg;
   int i;
   int tmp;
