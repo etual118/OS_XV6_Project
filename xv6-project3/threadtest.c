@@ -129,7 +129,6 @@ void nop(){ }
 void*
 racingthreadmain(void *arg)
 {
-  printf(1,"ff\n");
   int tid = (int) arg;
   int i;
   int tmp;
