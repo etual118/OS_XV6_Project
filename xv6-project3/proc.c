@@ -226,19 +226,20 @@ int
 growproc(int n)
 {
   uint sz;
-  struct proc *curproc = call_master();
+  struct proc *master = call_master();
+  struct proc *thd = myproc();
   acquire(&pdlock);
-  sz = curproc->sz;
+  sz = master->sz;
   if(n > 0){
-    if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
+    if((sz = allocuvm(master->pgdir, sz, sz + n)) == 0)
       return -1;
   } else if(n < 0){
-    if((sz = deallocuvm(curproc->pgdir, sz, sz + n)) == 0)
+    if((sz = deallocuvm(master->pgdir, sz, sz + n)) == 0)
       return -1;
   }
-  curproc->sz = sz;
+  master->sz = sz;
   release(&pdlock);
-  switchuvm(curproc);
+  switchuvm(thd);
   return 0;
 }
 
