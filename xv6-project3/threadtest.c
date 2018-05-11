@@ -46,6 +46,11 @@ int gcnt;
 int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
+  killtest,
+  pipetest,
+  sleeptest,
+  stridetest1,
+  stridetest2,
   racingtest,
   basictest,
   jointest1,
@@ -55,13 +60,13 @@ int (*testfunc[NTEST])(void) = {
   exittest2,
   exectest,
   sbrktest,
-  killtest,
-  pipetest,
-  sleeptest,
-  stridetest1,
-  stridetest2,
 };
 char *testname[NTEST] = {
+  "killtest",
+  "pipetest",
+  "sleeptest",
+  "stridetest1",
+  "stridetest2",
   "racingtest",
   "basictest",
   "jointest1",
@@ -71,11 +76,6 @@ char *testname[NTEST] = {
   "exittest2",
   "exectest",
   "sbrktest",
-  "killtest",
-  "pipetest",
-  "sleeptest",
-  "stridetest1",
-  "stridetest2",
 };
 
 int
@@ -327,7 +327,6 @@ exittest1(void)
       return -1;
     }
   }
-  sleep(1);
   return 0;
 }
 
