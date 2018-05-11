@@ -221,9 +221,8 @@ scheduler(void)
 int
 set_cpu_share(int inquire)
 {	
-	struct proc* p = myproc();
-	if(p->tinfo.master != 0)
-		p = p->tinfo.master;
+	cprintf("call share %d\n", inquire);
+	struct proc* p = call_master();
 	// share should be over 0
 	if(inquire <= 0)
 		return -1;
