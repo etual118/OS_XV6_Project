@@ -121,17 +121,6 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 
-// sched.c
-int 			push_MLFQ(int prior, struct proc* p);
-int 			pop_MLFQ(struct proc* p);
-int 			move_MLFQ_prior(int prior, struct proc* p);
-struct proc* 	pick_MLFQ(void);
-void 			prior_boost(void);
-struct proc*	pick_pass(void);
-void 			scheduler(void);
-int 			set_cpu_share(int inquire);
-void 			stride_adder(int step);
-int 			MLFQ_tick_adder(void);
 // swtch.S
 void            swtch(struct context**, struct context*);
 

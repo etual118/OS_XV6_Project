@@ -13,23 +13,6 @@ sys_fork(void)
   return fork();
 }
 
-extern uint ticks;
-int
-sys_yield(void)
-{
-<<<<<<< HEAD
-  /*
-  if(ticks % 2 == 0){
-=======
-  if(ticks % 2 == 1){
->>>>>>> ab14ba911d8292f9f1a6df347967959f5fd59193
-    MLFQ_tick_adder();
-  }
-  */
-  yield();
-  return 0;
-}
-
 int
 sys_exit(void)
 {
@@ -63,21 +46,6 @@ int
 sys_getppid(void)
 {
     return myproc()->parent->pid;
-}
-
-int
-sys_getlev(void)
-{
-  return myproc()->prior;
-}
-
-int
-sys_set_cpu_share(void)
-{
-  int n;
-  if(argint(0, &n) < 0)
-    return -1;
-  return set_cpu_share(n);
 }
 
 int

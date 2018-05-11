@@ -1,54 +1,60 @@
 /**
- *  This program requests portion of CPU resources with given parameter
- * value by calling set_cpu_share() system call.
- *  After that, periodically increases cnt values until its LIFETIME.
+ *  This program periodically counts the level(priority) of queue of the
+ * MLFQ scheduler which is containing this process.
+ *  Periodically yield if given parameter value is 1
+ *  Do not yield itself if given parameter value is 0
  */
 
 #include "types.h"
 #include "stat.h"
 #include "user.h"
 
-#define LIFETIME        1000        // (ticks)
-#define COUNT_PERIOD    1000000     // (iteration)
+#define LIFETIME        200000000   // (iteration)
+#define YIELD_PERIOD    10000       // (iteration)
+
+// Number of level(priority) of MLFQ scheduler
+#define MLFQ_LEVEL      3
 
 int
 main(int argc, char *argv[])
 {
-  uint i;
-  int cnt = 0;
-  uint start_tick;
-  uint curr_tick;
+    uint i;
+    int cnt_level[MLFQ_LEVEL] = {0, 0, 0};
+    int do_yield;
+    int curr_mlfq_level;
 
-  if (argc < 2) {
-    printf(1, "usage: sched_test_stride cpu_share(%)\n");
-    exit();
-  }
-
-
-  // Get start time
-  start_tick = uptime();
-
-  i = 0;
-  while (1) {
-    i++;
-
-    // Prevent code optimization
-    __sync_synchronize();
-
-    if (i == COUNT_PERIOD) {
-      cnt++;
-
-      // Get current time
-      curr_tick = uptime();
-
-      if (curr_tick - start_tick > LIFETIME) {
-        // Terminate process
-        printf(1, "MLFQ, cnt: %d\n", cnt);
-        break;
-      }
-      i = 0;
+    if (argc < 2) {
+        printf(1, "usage: sched_test_mlfq do_yield_or_not(0|1)\n");
+        exit();
     }
-  }
 
-  exit();
+    do_yield = atoi(argv[1]);
+
+    i = 0;
+    while (1) {
+        i++;
+        
+        // Prevent code optimization
+        __sync_synchronize();
+
+        if (i % YIELD_PERIOD == 0) {
+            // Get current MLFQ level(priority) of this process
+            curr_mlfq_level = getlev();
+            cnt_level[curr_mlfq_level]++;
+
+            if (i > LIFETIME) {
+                printf(1, "MLFQ(%s), lev[0]: %d, lev[1]: %d, lev[2]: %d\n",
+                        do_yield==0 ? "compute" : "yield",
+                        cnt_level[0], cnt_level[1], cnt_level[2]);
+                break;
+            }
+
+            if (do_yield) {
+                // Yield process itself, not by timer interrupt
+                yield();
+            }
+        }
+    }
+
+    exit();
 }
