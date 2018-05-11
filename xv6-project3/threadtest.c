@@ -46,12 +46,6 @@ int gcnt;
 int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
-  racingtest,
-  basictest,
-  jointest1,
-  jointest2,
-  stresstest,
-  exittest1,
   exittest2,
   exectest,
   sbrktest,
@@ -60,14 +54,14 @@ int (*testfunc[NTEST])(void) = {
   sleeptest,
   stridetest1,
   stridetest2,
+    racingtest,
+  basictest,
+  jointest1,
+  jointest2,
+  stresstest,
+  exittest1,
 };
 char *testname[NTEST] = {
-  "racingtest",
-  "basictest",
-  "jointest1",
-  "jointest2",
-  "stresstest",
-  "exittest1",
   "exittest2",
   "exectest",
   "sbrktest",
@@ -76,6 +70,12 @@ char *testname[NTEST] = {
   "sleeptest",
   "stridetest1",
   "stridetest2",
+    "racingtest",
+  "basictest",
+  "jointest1",
+  "jointest2",
+  "stresstest",
+  "exittest1",
 };
 
 int
@@ -304,7 +304,6 @@ stresstest(void)
 void*
 exitthreadmain(void *arg)
 {
-  printf(1, "call\n");
   int i;
   if ((int)arg == 1){
     while(1){
