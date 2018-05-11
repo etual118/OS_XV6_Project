@@ -587,6 +587,7 @@ stridethreadmain(void *arg)
       __sync_fetch_and_add(&gcnt, 1);
     }
   }
+  printf(1,"im fin\n");
   thread_exit(0);
 }
 
