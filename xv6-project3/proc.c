@@ -32,7 +32,7 @@ thread_exit(void *retval){
     exit(); // 예외처리 이렇게 해도되나?
   acquire(&ptable.lock);
   // Parent might be sleeping in wait().
-  //wakeup1(curproc->tinfo.master);
+  wakeup1(curproc->tinfo.master);
   struct proc *p;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){

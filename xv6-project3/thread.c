@@ -198,7 +198,15 @@ thread_RR(struct proc* master){
 		return master;
 	int i = master->recent;
 	do{
-		i = (i + 1) % NTHREAD;
+		i = (i + 1) % (NTHREAD+ 1);
+		if(i == NTHREAD){
+			if(master->state == RUNNABLE){
+				master->recent = i;
+				return master;
+			}else{
+				continue;
+			}
+		}
 		if(master->threads[i] != 0 && master->threads[i]->state == RUNNABLE){
 			master->recent = i;
 			return master->threads[i];
