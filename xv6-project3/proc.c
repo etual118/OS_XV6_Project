@@ -18,10 +18,55 @@ int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
 
+static void wakeup1(void *chan);
+
+
 extern struct stride s_cand[NPROC];
 extern struct FQ MLFQ_table[3];
 extern struct spinlock pdlock;
 
+// Exit thread.
+void
+thread_exit(void *retval){
+  struct proc *curproc = myproc();
+  int fd;
+  // If master threads call this function, it works as exit().
+  // Exactly, this case is error.
+  if(curproc->tinfo.master == 0)
+    exit(); 
+
+  for(fd = 0; fd < NOFILE; fd++){
+    if(curproc->ofile[fd]){
+      fileclose(curproc->ofile[fd]);
+      curproc->ofile[fd] = 0;
+    }
+  }
+
+  begin_op();
+  iput(curproc->cwd);
+  end_op();
+  curproc->cwd = 0;
+  acquire(&ptable.lock);
+  // Master might be sleeping in thread_join().
+  wakeup1(curproc->tinfo.master);
+  struct proc *p;
+
+
+// fork 짜고 다시 생각해보기 로직이 말이 안되는거 같기도함.
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->parent == curproc){
+      p->parent = initproc;
+      if(p->state == ZOMBIE)
+        wakeup1(initproc);
+    }
+  }  
+  // Save retval in master thread's proc structure.
+  curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
+  curproc->state = ZOMBIE; 
+  curproc->tinfo.master->cnt_t--;
+  sched();
+  panic("zombie thread exit");
+}
 
 void
 pinit(void)
@@ -198,6 +243,7 @@ growproc(int n)
   }
   master->sz = sz;
   release(&pdlock);
+  // Load pgdir of thd.
   switchuvm(thd);
   return 0;
 }
@@ -264,6 +310,7 @@ exit(void)
   int i;
 
   // Close all open files.
+  // Include other threads.
   for(i = 0; i <= NTHREAD; i++){
     if(i == NTHREAD){
       curproc = master;
@@ -303,7 +350,7 @@ mast:
         wakeup1(initproc);
     }
   }
-
+  // Make other threads zombie too.
   for(i = 0; i < NTHREAD; i++){
     if(master->threads[i] != 0){
       master->threads[i]->state = ZOMBIE;
@@ -344,6 +391,8 @@ wait(void)
       havekids = 1;
       if(p->state == ZOMBIE){
         int i;
+        // Collect all other threads proc structure.
+        // It can works only in thread_join() is not called.
         for(i = 0; i < NTHREAD; i++){
           if(p->threads[i] != 0){
             kfree(p->threads[i]->kstack);
@@ -353,10 +402,9 @@ wait(void)
             p->threads[i]->name[0] = 0;
             p->threads[i]->killed = 0;
             p->threads[i]->state = UNUSED;
+            p->threads[i] = 0;
           }
         }
-
-
         // Found one.
         pid = p->pid;
         kfree(p->kstack);

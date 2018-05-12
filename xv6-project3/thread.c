@@ -16,8 +16,11 @@ extern int nextpid;
 extern void forkret(void);
 extern void trapret(void);
 
+// In case of multithreading, pgdir can
+// under race condition.
 struct spinlock pdlock;
 
+// Makes basic structure of thread.
 static struct proc*
 allocthread(struct proc *master)
 {
@@ -25,6 +28,8 @@ allocthread(struct proc *master)
   char *sp;
 
   int i;
+	// thread is light weight process, so it is allocated
+	// one of ptable's proc structure.
   acquire(&ptable.lock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
@@ -60,8 +65,10 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
   p->parent = master->parent;
-
+  // Master thread is saved in proc structure
+  // thread can easily points master thread.
   p->tinfo.master = master;
+  // Threads share the pgdir
   p->pgdir = master->pgdir;
 
   for(i = 0; i < NTHREAD; i++){
@@ -77,11 +84,14 @@ found:
   return p;
 }
 
+// Allocate user stack to new thread.
 int
 allocstack(struct proc *master, struct proc *new){
 
 	acquire(&pdlock);
 	int i;
+	// case 1 : find sz dealloc array
+	// in dealloc array, has sz exit thread returned.
 	for(i = 0; i < NTHREAD; i++){
 		if(master->dealloc[i] != 0){
 			if((new->sz = allocuvm(master->pgdir, master->dealloc[i],
@@ -93,23 +103,30 @@ allocstack(struct proc *master, struct proc *new){
 			goto fin;
 		}
 	}
+	// case 2 : there are no size in dealloc array
+	// allocate new uvm, which grows sz of mem both master and new threads.
 	if((new->sz = allocuvm(master->pgdir, master->sz, master->sz + 2*PGSIZE)) == 0){
 		release(&pdlock);
 		return -1;
 	}
 	master->sz = new->sz;
 fin:
+	// Set guard page.
 	clearpteu(master->pgdir, (char*)(new->sz - 2*PGSIZE));
 	release(&pdlock);
 	return 0;
 }
 
+// Collect exit thread's kstack and ustack.
 int
 deallocstack(struct proc *join){
 
 	acquire(&pdlock);
+	// Free kstack.
 	kfree(join->kstack);
 	int i;
+	// Save exit thread's sz in dealloc array
+	// for can be used later allocating.
 	for(i = 0; i < NTHREAD; i++){
 		if(join->tinfo.master->dealloc[i] == 0){
 			if((join->tinfo.master->dealloc[i] = deallocuvm(join->pgdir, 
@@ -127,6 +144,7 @@ deallocstack(struct proc *join){
 
 }
 
+// Create new threads.
 int 
 thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 	
@@ -134,13 +152,13 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 	struct proc *master = call_master();
 	uint t_ustack[3];
 	uint sp;
-	
+	// Allocate kstack and ustack for newly created thread.
 	if((thd = allocthread(master)) == 0)
 		return -1;
 	
 	if(allocstack(master, thd) < 0)
 		return -1;
-	
+	// Set file and i/o chan.
 	int i;
   for(i = 0; i < NOFILE; i++)
     if(master->ofile[i])
@@ -149,16 +167,17 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
     
   safestrcpy(thd->name, master->name, sizeof(master->name));
     
-
+  // Change thread's tf.
+  // eip should be changed to function ptr.
 	*thd->tf = *master->tf;
 	thd->tf->eip = (uint)start_routine;
 	sp = thd->sz;
-	// void ptr를 어떻게 처리해야하나?
+	// Save arg for start routine can use.
 	t_ustack[0] = 0xffffffff;
 	t_ustack[1] = (uint)arg;
 	t_ustack[2] = 0;
 	sp -= sizeof(t_ustack);
-	
+	// Set ustack finish.
 	if(copyout(master->pgdir, sp, t_ustack, sizeof(t_ustack)) < 0)
 		return -1;
 	
@@ -171,21 +190,23 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 	return 0;
 }
 
+
+// Clean up the resources allocated to the thread.
 int
 thread_join(thread_t thread, void **retval){
 
 	struct proc *join = thread;
 	acquire(&ptable.lock);
-	
+	// Master thread sleep while thread running.
 	while(join->state != ZOMBIE)
 		sleep(thread->tinfo.master, &ptable.lock);
 
-	
+	// Dealloc ustack and kstack.
 	if(deallocstack(join) < 0){
 		release(&ptable.lock);
 		return -1;
 	}
-	
+	// If ptr is not NULL, then set retval.
 	if(retval != 0)
 		*retval = thread->tinfo.master->ret[join->tinfo.tid];
 	
@@ -198,46 +219,13 @@ thread_join(thread_t thread, void **retval){
 	return 0;
 }
 
-void
-thread_exit(void *retval){
-  struct proc *curproc = myproc();
-  int fd;
-  if(curproc->tinfo.master == 0)
-    exit(); 
+/*
+	Thread exit function is in proc.c
+ */
 
-  for(fd = 0; fd < NOFILE; fd++){
-    if(curproc->ofile[fd]){
-      fileclose(curproc->ofile[fd]);
-      curproc->ofile[fd] = 0;
-    }
-  }
-
-  begin_op();
-  iput(curproc->cwd);
-  end_op();
-  curproc->cwd = 0;
-  acquire(&ptable.lock);
-  // Parent might be sleeping in wait().
-  wakeup1(curproc->tinfo.master);
-  struct proc *p;
-
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->parent == curproc){
-      p->parent = initproc;
-      if(p->state == ZOMBIE)
-        wakeup1(initproc);
-    }
-  }  
-
-  curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
-  curproc->state = ZOMBIE; 
-  curproc->tinfo.master->cnt_t--;
-  sched();
-  panic("zombie thread exit");
-}
-
-
-
+// Only master thread could in scheduler.
+// But schduling unit is thread we return thread by RR algorithm
+// if master thread picked by scheduler
 struct proc*
 thread_RR(struct proc* master){
 
@@ -263,6 +251,7 @@ thread_RR(struct proc* master){
 	return master;
 }
 
+// Return master thread.
 struct proc*
 call_master(void){
 	struct proc* p = myproc();

@@ -36,8 +36,8 @@ enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 // Thread structuer for each thread
 struct thread {
-  struct proc *master;         // Points master thread
-  int tid;                     // Thread id
+  struct proc *master;         // Points master thread if 0, proc is master
+  int tid;                     // Thread id, index of master thread's threads array
 };
 
 // Per-process state
@@ -58,7 +58,7 @@ struct proc {
   uint prior;                  /// MLFQ priority, when prior is 3 it is stride
   uint pticks;                 /// pticks for time allotment
   struct stride *myst;         // Stride structure pointer
-  struct thread tinfo;
+  struct thread tinfo;         // Thread structure
   // Below this for master thread
   void* ret[NTHREAD];          // Thread's return value
   int dealloc[NTHREAD];        // deallocated size of stack

@@ -120,7 +120,6 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-static void 	wakeup1(void *chan);
 
 // sched.c
 void            scheduler(void) __attribute__((noreturn));
