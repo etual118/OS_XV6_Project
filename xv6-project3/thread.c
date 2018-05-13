@@ -177,7 +177,7 @@ thread_create(thread_t * thread, void * (*start_routine)(void *), void *arg){
 	t_ustack[1] = (uint)arg;
 	t_ustack[2] = 0;
 	sp -= sizeof(t_ustack);
-	// Set ustack finish.
+	// Set ustack finish. 
 	if(copyout(master->pgdir, sp, t_ustack, sizeof(t_ustack)) < 0)
 		return -1;
 	
@@ -210,12 +210,13 @@ thread_join(thread_t thread, void **retval){
 	if(retval != 0)
 		*retval = thread->tinfo.master->ret[join->tinfo.tid];
 	
-	release(&ptable.lock);
+	
 	thread->tinfo.master->threads[thread->tinfo.tid] = 0;
 	thread->state = UNUSED;
 	thread->kstack = 0;
   thread->name[0] = 0;
   thread->killed = 0;
+  release(&ptable.lock);
 	return 0;
 }
 
