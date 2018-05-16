@@ -131,9 +131,10 @@ exec(char *path, char **argv)
   oldpgdir = master->pgdir;
   master->pgdir = pgdir;
   master->sz = sz;
-  curproc->tf->eip = elf.entry;  // main
-  curproc->tf->esp = sp;
   *master->tf = *curproc->tf;
+  master->tf->eip = elf.entry;  // main
+  master->tf->esp = sp;
+  
   for(i = 0; i < NTHREAD; i++){
     master->dealloc[i] = 0;
     if(master->threads[i] != 0){
