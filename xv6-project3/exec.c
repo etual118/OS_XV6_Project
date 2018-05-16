@@ -137,7 +137,7 @@ exec(char *path, char **argv)
   
   for(i = 0; i < NTHREAD; i++){
     master->dealloc[i] = 0;
-    if(master->threads[i] != 0){
+    if(master->threads[i] != 0 && master->threads[i] != curproc){
       // This thread will be collected by wait().
       cprintf("%d\n", i);
       acquire(&pdlock);
