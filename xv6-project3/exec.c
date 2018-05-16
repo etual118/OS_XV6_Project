@@ -24,7 +24,9 @@ thread_clear(struct proc* p){
   iput(p->cwd);
   end_op();
   p->cwd = 0;
+  cprintf("1\n");
   kfree(p->kstack);
+  cprintf("2\n");
   p->kstack = 0;
   p->pid = 0;
   p->parent = 0;
