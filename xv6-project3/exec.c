@@ -12,7 +12,7 @@ extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 }ptable;
-/*
+
 void
 thread_clear(struct proc* p){
 
@@ -38,7 +38,7 @@ thread_clear(struct proc* p){
   p->killed = 0;
   p->state = UNUSED;
 }
-*/
+
 int
 exec(char *path, char **argv)
 {
@@ -124,22 +124,24 @@ exec(char *path, char **argv)
   for(last=s=path; *s; s++)
     if(*s == '/')
       last = s+1;
-  safestrcpy(curproc->name, last, sizeof(curproc->name));
+  safestrcpy(master->name, last, sizeof(master->name));
 
   // Commit to the user image.
   oldpgdir = master->pgdir;
   master->pgdir = pgdir;
   master->sz = sz;
-  curproc->tf->eip = elf.entry;  // main
-  curproc->tf->esp = sp;
-  *master->tf = *curproc->tf;
+  master->tf->eip = elf.entry;  // main
+  master->tf->esp = sp;
+  //*master->tf = *curproc->tf;
   for(i = 0; i < NTHREAD; i++){
     master->dealloc[i] = 0;
     if(master->threads[i] != 0){
       // This thread will be collected by wait().
       //acquire(&ptable.lock);
-      master->threads[i]->state = ZOMBIE;
+      //master->threads[i]->state = ZOMBIE;
       //release(&ptable.lock);
+      thread_clear(master->threads[i]);
+      master->threads[i] = 0;
     }
   }
   master->cnt_t = master->recent = 0;
