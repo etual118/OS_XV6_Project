@@ -12,6 +12,7 @@ extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 }ptable;
+extern struct spinlock pdlock;
 /*
 void
 thread_clear(struct proc* p){
@@ -137,9 +138,11 @@ exec(char *path, char **argv)
     master->dealloc[i] = 0;
     if(master->threads[i] != 0){
       // This thread will be collected by wait().
-      //acquire(&ptable.lock);
+      // acquire(&pdlock);
+      // kfree(master->threads[i]->kstack);
+      // release(&pdlock);
       master->threads[i]->state = ZOMBIE;
-      //release(&ptable.lock);
+      
     }
   }
   master->cnt_t = master->recent = 0;
