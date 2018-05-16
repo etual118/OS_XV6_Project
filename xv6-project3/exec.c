@@ -32,6 +32,7 @@ thread_clear(struct proc* p){
   p->killed = 0;
   p->state = UNUSED;
 }
+
 int
 exec(char *path, char **argv)
 {
@@ -128,10 +129,11 @@ exec(char *path, char **argv)
   *master->tf = *curproc->tf;
   for(i = 0; i < NTHREAD; i++){
     master->dealloc[i] = 0;
-    if(master->threads[i] != 0)
+    if(master->threads[i] != 0){
       // This thread will be collected by wait().
       thread_clear(master->threads[i]);
       master->threads[i] = 0;
+    }
   }
   master->cnt_t = master->recent = 0;
   switchuvm(master);
