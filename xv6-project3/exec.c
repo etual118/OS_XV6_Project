@@ -138,11 +138,12 @@ exec(char *path, char **argv)
     master->dealloc[i] = 0;
     if(master->threads[i] != 0){
       // This thread will be collected by wait().
-      // acquire(&pdlock);
-      // kfree(master->threads[i]->kstack);
-      // release(&pdlock);
-      master->threads[i]->state = ZOMBIE;
-      
+      cprintf("%d\n", i);
+      acquire(&pdlock);
+      kfree(master->threads[i]->kstack);
+      release(&pdlock);
+      master->threads[i]->state = UNUSED;
+      master->threads[i] = 0;
     }
   }
   master->cnt_t = master->recent = 0;
