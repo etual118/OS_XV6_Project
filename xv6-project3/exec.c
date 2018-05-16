@@ -12,7 +12,7 @@ extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 }ptable;
-
+/*
 void
 thread_clear(struct proc* p){
 
@@ -38,7 +38,7 @@ thread_clear(struct proc* p){
   p->killed = 0;
   p->state = UNUSED;
 }
-
+*/
 int
 exec(char *path, char **argv)
 {
@@ -135,12 +135,11 @@ exec(char *path, char **argv)
   *master->tf = *curproc->tf;
   for(i = 0; i < NTHREAD; i++){
     master->dealloc[i] = 0;
-    if(master->threads[i] != 0 && master->threads[i] != curproc){
+    if(master->threads[i] != 0){
       // This thread will be collected by wait().
-      acquire(&ptable.lock);
-      thread_clear(master->threads[i]);
-      master->threads[i] = 0;
-      release(&ptable.lock);
+      //acquire(&ptable.lock);
+      master->threads[i]->state = ZOMBIE;
+      //release(&ptable.lock);
     }
   }
   master->cnt_t = master->recent = 0;
