@@ -12,10 +12,10 @@ extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 }ptable;
-
+/*
 void
 thread_clear(struct proc* p){
-  /*
+
   int fd;
   for(fd = 0; fd < NOFILE; fd++){
     if(p->ofile[fd]){
@@ -28,7 +28,6 @@ thread_clear(struct proc* p){
   iput(p->cwd);
   end_op();
   p->cwd = 0;
-  */
   cprintf("1\n");
   kfree(p->kstack);
   cprintf("2\n");
@@ -39,7 +38,7 @@ thread_clear(struct proc* p){
   p->killed = 0;
   p->state = UNUSED;
 }
-
+*/
 int
 exec(char *path, char **argv)
 {
@@ -109,7 +108,7 @@ exec(char *path, char **argv)
     sp = (sp - (strlen(argv[argc]) + 1)) & ~3;
     if(copyout(pgdir, sp, argv[argc], strlen(argv[argc]) + 1) < 0)
       goto bad;
-    ustack[3+argc] = sp;
+    ustack[3+argc] = sp;c
   }
   ustack[3+argc] = 0;
 
@@ -125,25 +124,22 @@ exec(char *path, char **argv)
   for(last=s=path; *s; s++)
     if(*s == '/')
       last = s+1;
-  safestrcpy(master->name, last, sizeof(master->name));
+  safestrcpy(curproc->name, last, sizeof(curproc->name));
 
   // Commit to the user image.
   oldpgdir = master->pgdir;
   master->pgdir = pgdir;
   master->sz = sz;
-  master->tf->eip = elf.entry;  // main
-  master->tf->esp = sp;
-  //*master->tf = *curproc->tf;
+  curproc->tf->eip = elf.entry;  // main
+  curproc->tf->esp = sp;
+  *master->tf = *curproc->tf;
   for(i = 0; i < NTHREAD; i++){
     master->dealloc[i] = 0;
     if(master->threads[i] != 0){
       // This thread will be collected by wait().
       //acquire(&ptable.lock);
       master->threads[i]->state = ZOMBIE;
-      // release(&ptable.lock);
-      // cprintf("exec %d\n", i);
-      // thread_clear(master->threads[i]);
-      // master->threads[i] = 0;
+      //release(&ptable.lock);
     }
   }
   master->cnt_t = master->recent = 0;
