@@ -394,7 +394,7 @@ wait(void)
         // Collect all other threads proc structure.
         // It can works only in thread_join() is not called.
         struct proc* t;
-        for(t = ptable.proc; t < &ptable.proc[NPROC]; p++){
+        for(t = ptable.proc; t < &ptable.proc[NPROC]; t++){
           if(t->tinfo.master == p){
             kfree(t->kstack);
             t->kstack = 0;
