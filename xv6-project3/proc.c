@@ -393,18 +393,19 @@ wait(void)
         int i;
         // Collect all other threads proc structure.
         // It can works only in thread_join() is not called.
-        struct proc* t;
-        for(t = ptable.proc; t < &ptable.proc[NPROC]; t++){
-          if(t->tinfo.master == p){
-            kfree(t->kstack);
-            t->kstack = 0;
-            t->pid = 0;
-            t->parent = 0;
-            t->name[0] = 0;
-            t->killed = 0;
-            t->state = UNUSED;            
+        for(i = 0; i < NTHREAD; i++){
+          if(p->threads[i] != 0){
+            kfree(p->threads[i]->kstack);
+            p->threads[i]->kstack = 0;
+            p->threads[i]->pid = 0;
+            p->threads[i]->parent = 0;
+            p->threads[i]->name[0] = 0;
+            p->threads[i]->killed = 0;
+            p->threads[i]->state = UNUSED;
+            p->threads[i] = 0;
           }
         }
+        // Found one.
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
