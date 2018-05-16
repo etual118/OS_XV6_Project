@@ -15,7 +15,7 @@ extern struct {
 
 void
 thread_clear(struct proc* p){
-
+  /*
   int fd;
   for(fd = 0; fd < NOFILE; fd++){
     if(p->ofile[fd]){
@@ -28,6 +28,7 @@ thread_clear(struct proc* p){
   iput(p->cwd);
   end_op();
   p->cwd = 0;
+  */
   cprintf("1\n");
   kfree(p->kstack);
   cprintf("2\n");
