@@ -102,10 +102,13 @@ exec(char *path, char **argv)
   curproc->tf->esp = sp;
   *master->tf = *curproc->tf;
   for(i = 0; i < NTHREAD; i++){
+    master->dealloc[i] = 0;
     if(master->threads[i] != 0)
       // This thread will be collected by wait().
       master->threads[i]->state = ZOMBIE;
+      master->threads[i] = 0;
   }
+  master->cnt_t = master->recent = 0;
   switchuvm(master);
   freevm(oldpgdir);
   return 0;
