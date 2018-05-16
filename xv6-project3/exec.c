@@ -106,7 +106,7 @@ exec(char *path, char **argv)
     if(master->threads[i] != 0)
       // This thread will be collected by wait().
       master->threads[i]->state = ZOMBIE;
-      master->threads[i] = 0;
+      //master->threads[i] = 0;
   }
   master->cnt_t = master->recent = 0;
   switchuvm(master);
