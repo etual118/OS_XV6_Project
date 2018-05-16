@@ -141,6 +141,7 @@ exec(char *path, char **argv)
       //acquire(&ptable.lock);
       //master->threads[i]->state = ZOMBIE;
       //release(&ptable.lock);
+      cprintf("exec %d\n", i)
       thread_clear(master->threads[i]);
       master->threads[i] = 0;
     }

@@ -395,6 +395,7 @@ wait(void)
         // It can works only in thread_join() is not called.
         for(i = 0; i < NTHREAD; i++){
           if(p->threads[i] != 0){
+            cprintf("%d called", i);
             kfree(p->threads[i]->kstack);
             p->threads[i]->kstack = 0;
             p->threads[i]->pid = 0;
