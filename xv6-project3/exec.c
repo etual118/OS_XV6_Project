@@ -23,7 +23,7 @@ thread_clear(struct proc* p){
   begin_op();
   iput(p->cwd);
   end_op();
-  curproc->cwd = 0;
+  p->cwd = 0;
   kfree(p->kstack);
   p->kstack = 0;
   p->pid = 0;
