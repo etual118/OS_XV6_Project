@@ -108,7 +108,7 @@ exec(char *path, char **argv)
     sp = (sp - (strlen(argv[argc]) + 1)) & ~3;
     if(copyout(pgdir, sp, argv[argc], strlen(argv[argc]) + 1) < 0)
       goto bad;
-    ustack[3+argc] = sp;c
+    ustack[3+argc] = sp;
   }
   ustack[3+argc] = 0;
 
