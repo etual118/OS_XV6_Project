@@ -386,30 +386,20 @@ wait(void)
     // Scan through table looking for exited children.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != curproc||p->tinfo.master != 0)
+      if(p->parent != curproc)
         continue;
       havekids = 1;
       if(p->state == ZOMBIE){
         int i;
         // Collect all other threads proc structure.
         // It can works only in thread_join() is not called.
-        for(i = 0; i < NTHREAD; i++){
-          if(p->threads[i] != 0){
-            kfree(p->threads[i]->kstack);
-            p->threads[i]->kstack = 0;
-            p->threads[i]->pid = 0;
-            p->threads[i]->parent = 0;
-            p->threads[i]->name[0] = 0;
-            p->threads[i]->killed = 0;
-            p->threads[i]->state = UNUSED;
-            p->threads[i] = 0;
-          }
-        }
+
         // Found one.
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
-        freevm(p->pgdir);
+        if(p->tinfo.master == 0)
+          freevm(p->pgdir);
         p->pid = 0;
         p->parent = 0;
         p->name[0] = 0;
