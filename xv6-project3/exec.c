@@ -7,6 +7,31 @@
 #include "x86.h"
 #include "elf.h"
 
+
+
+void
+thread_clear(struct proc* p){
+
+  int fd;
+  for(fd = 0; fd < NOFILE; fd++){
+    if(p->ofile[fd]){
+      fileclose(p->ofile[fd]);
+      p->ofile[fd] = 0;
+    }
+  }
+
+  begin_op();
+  iput(p->cwd);
+  end_op();
+  curproc->cwd = 0;
+  kfree(p->kstack);
+  p->kstack = 0;
+  p->pid = 0;
+  p->parent = 0;
+  p->name[0] = 0;
+  p->killed = 0;
+  p->state = UNUSED;
+}
 int
 exec(char *path, char **argv)
 {
@@ -105,8 +130,8 @@ exec(char *path, char **argv)
     master->dealloc[i] = 0;
     if(master->threads[i] != 0)
       // This thread will be collected by wait().
-      master->threads[i]->state = ZOMBIE;
-      //master->threads[i] = 0;
+      thread_clear(master->threads[i]);
+      master->threads[i] = 0;
   }
   master->cnt_t = master->recent = 0;
   switchuvm(master);
