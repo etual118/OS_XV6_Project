@@ -139,11 +139,11 @@ exec(char *path, char **argv)
     if(master->threads[i] != 0){
       // This thread will be collected by wait().
       //acquire(&ptable.lock);
-      //master->threads[i]->state = ZOMBIE;
+      master->threads[i]->state = ZOMBIE;
       //release(&ptable.lock);
-      cprintf("exec %d\n", i)
-      thread_clear(master->threads[i]);
-      master->threads[i] = 0;
+      //cprintf("exec %d\n", i);
+      //thread_clear(master->threads[i]);
+      //master->threads[i] = 0;
     }
   }
   master->cnt_t = master->recent = 0;
