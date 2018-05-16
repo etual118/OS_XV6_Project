@@ -327,7 +327,7 @@ exittest1(void)
       return -1;
     }
   }
-  sleep(1);
+  //sleep(1);
   return 0;
 }
 
