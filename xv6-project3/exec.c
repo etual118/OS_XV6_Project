@@ -7,7 +7,10 @@
 #include "x86.h"
 #include "elf.h"
 
-
+extern struct {
+  struct spinlock lock;
+  struct proc proc[NPROC];
+}ptable;
 
 void
 thread_clear(struct proc* p){
@@ -133,8 +136,10 @@ exec(char *path, char **argv)
     master->dealloc[i] = 0;
     if(master->threads[i] != 0 && master->threads[i] != curproc){
       // This thread will be collected by wait().
+      acquire(&ptable.lock);
       thread_clear(master->threads[i]);
       master->threads[i] = 0;
+      release(&ptable.lock);
     }
   }
   master->cnt_t = master->recent = 0;
