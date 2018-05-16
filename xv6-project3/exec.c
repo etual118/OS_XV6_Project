@@ -12,7 +12,6 @@ extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 }ptable;
-extern struct spinlock pdlock;
 /*
 void
 thread_clear(struct proc* p){
@@ -131,20 +130,16 @@ exec(char *path, char **argv)
   oldpgdir = master->pgdir;
   master->pgdir = pgdir;
   master->sz = sz;
+  curproc->tf->eip = elf.entry;  // main
+  curproc->tf->esp = sp;
   *master->tf = *curproc->tf;
-  master->tf->eip = elf.entry;  // main
-  master->tf->esp = sp;
-  
   for(i = 0; i < NTHREAD; i++){
     master->dealloc[i] = 0;
-    if(master->threads[i] != 0 && master->threads[i] != curproc){
+    if(master->threads[i] != 0){
       // This thread will be collected by wait().
-      cprintf("%d\n", i);
-      acquire(&pdlock);
-      kfree(master->threads[i]->kstack);
-      release(&pdlock);
-      master->threads[i]->state = UNUSED;
-      master->threads[i] = 0;
+      //acquire(&ptable.lock);
+      master->threads[i]->state = ZOMBIE;
+      //release(&ptable.lock);
     }
   }
   master->cnt_t = master->recent = 0;
