@@ -157,7 +157,7 @@ mast2:
     if(clear == curproc || clear->state != ZOMBIE)
       continue;
     
-    if(threads_clear(clear)){
+    if(thread_clear(clear)){
       m++;
     }
   }
