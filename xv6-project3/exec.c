@@ -15,6 +15,8 @@ extern struct {
 
 void
 thread_clear(struct proc* p){
+  if(p->tinfo.master == 0)
+    freevm(p->pgdir);
   kfree(p->kstack);
   p->kstack = 0;
   p->pid = 0;
