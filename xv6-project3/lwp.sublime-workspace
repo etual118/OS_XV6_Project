@@ -75,7 +75,7 @@
 			"file": "exec.c",
 			"settings":
 			{
-				"buffer_size": 3471,
+				"buffer_size": 3438,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -791,7 +791,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 666.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -803,20 +803,23 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3471,
+						"buffer_size": 3438,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2947,
-								2947
+								3438,
+								3438
 							]
 						],
 						"settings":
 						{
 							"SL.184.region_keys":
+							[
+							],
+							"SL.200.region_keys":
 							[
 							],
 							"bracket_highlighter.busy": false,
@@ -827,8 +830,8 @@
 								{
 									"1":
 									[
-										3467,
-										3468
+										3470,
+										3471
 									]
 								},
 								"icon":
@@ -915,8 +918,8 @@
 								{
 									"1":
 									[
-										3470,
-										3471
+										3437,
+										3438
 									]
 								},
 								"icon":
@@ -1003,7 +1006,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2064.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -1022,8 +1025,8 @@
 						"selection":
 						[
 							[
-								9553,
-								9553
+								8355,
+								9824
 							]
 						],
 						"settings":
@@ -1112,8 +1115,8 @@
 								{
 									"1":
 									[
-										9552,
-										9553
+										9825,
+										9826
 									]
 								},
 								"icon":
@@ -1128,8 +1131,8 @@
 								{
 									"1":
 									[
-										8599,
-										8600
+										8351,
+										8352
 									]
 								},
 								"unmatched":
@@ -1199,7 +1202,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6395.0,
+						"translation.y": 7618.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
