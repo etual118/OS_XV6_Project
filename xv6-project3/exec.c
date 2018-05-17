@@ -156,12 +156,9 @@ mast1:
 mast2: 
     if(clear == curproc || clear->state != ZOMBIE)
       continue;
-    
-    if(thread_clear(clear)){
-      m++;
-    }
+    thread_clear(clear)
   }
-  if(m){
+  if(!is_master){
       master->tinfo.master = curproc;
       int j;
       for(j = 0; j < NTHREAD; j++){
