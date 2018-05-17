@@ -13,10 +13,13 @@ extern struct {
   struct proc proc[NPROC];
 }ptable;
 
-void
+int
 thread_clear(struct proc* p){
-  if(p->tinfo.master == 0)
+  int m = 0;
+  if(p->tinfo.master == 0){
     freevm(p->pgdir);
+    m = 1;
+  }
   kfree(p->kstack);
   p->kstack = 0;
   p->pid = 0;
@@ -24,6 +27,7 @@ thread_clear(struct proc* p){
   p->name[0] = 0;
   p->killed = 0;
   p->state = UNUSED;
+  return m;
 }
 
 void
@@ -153,7 +157,13 @@ mast1:
 mast2: 
     if(clear == curproc || clear->state != ZOMBIE)
       continue;
-    thread_clear(clear);
+    if(thread_clear(clear)){
+      clear->tinfo.master = curproc;
+      int j;
+      for(j = 0; j < NTHREAD; j++){
+        clear->threads[j] = 0;
+      }
+    }
   } 
   release(&ptable.lock);
 
