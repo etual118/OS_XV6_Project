@@ -12,26 +12,10 @@ extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 }ptable;
-
-int
-thread_clear(struct proc* p){
-  int m = 0;
-  if(p->tinfo.master == 0){
-    freevm(p->pgdir);
-    m = 1;
-  }
-  kfree(p->kstack);
-  p->kstack = 0;
-  p->pid = 0;
-  p->parent = 0;
-  p->name[0] = 0;
-  p->killed = 0;
-  p->state = UNUSED;
-  return m;
-}
-
+/*
 void
-clear_file(struct proc* p){
+thread_clear(struct proc* p){
+
   int fd;
   for(fd = 0; fd < NOFILE; fd++){
     if(p->ofile[fd]){
@@ -39,13 +23,27 @@ clear_file(struct proc* p){
       p->ofile[fd] = 0;
     }
   }
-}
 
+  begin_op();
+  iput(p->cwd);
+  end_op();
+  p->cwd = 0;
+  cprintf("1\n");
+  kfree(p->kstack);
+  cprintf("2\n");
+  p->kstack = 0;
+  p->pid = 0;
+  p->parent = 0;
+  p->name[0] = 0;
+  p->killed = 0;
+  p->state = UNUSED;
+}
+*/
 int
 exec(char *path, char **argv)
 {
   char *s, *last;
-  int i, off, is_master = 0;
+  int i, off;
   uint argc, sz, sp, ustack[3+MAXARG+1];
   struct elfhdr elf;
   struct inode *ip;
@@ -54,8 +52,6 @@ exec(char *path, char **argv)
   struct proc *curproc = myproc();
   struct proc *master = call_master();
 
-  if(curproc == master)
-    is_master = 1;
   begin_op();
 
   if((ip = namei(path)) == 0){
@@ -130,58 +126,34 @@ exec(char *path, char **argv)
       last = s+1;
   safestrcpy(curproc->name, last, sizeof(curproc->name));
 
-  struct proc *clear;
-  for(i = 0; i <= NTHREAD; i++){
-    if(i == NTHREAD){
-      clear = master;
-      goto mast1;
-    }
-    if(master->threads[i] != 0)
-      clear = master->threads[i];
-mast1: 
-    if(clear == curproc)
-      continue;
-    clear_file(clear);
-    clear->state = ZOMBIE;
-    wakeup(curproc->parent);
-  }
-
-  acquire(&ptable.lock);
-  for(i = 0; i <= NTHREAD; i++){
-    if(i == NTHREAD){
-      clear = master;
-      goto mast2;
-    }
-    if(master->threads[i] != 0)
-      clear = master->threads[i];
-mast2: 
-    if(clear == curproc || clear->state != ZOMBIE)
-      continue;
-    if(thread_clear(clear)){
-      clear->tinfo.master = curproc;
-      int j;
-      for(j = 0; j < NTHREAD; j++){
-        clear->threads[j] = 0;
-      }
-    }
-  } 
-  release(&ptable.lock);
-
-  curproc->tinfo.master = 0;
   // Commit to the user image.
-  oldpgdir = curproc->pgdir;
-  curproc->pgdir = pgdir;
-  curproc->sz = sz;
+  oldpgdir = master->pgdir;
+  master->pgdir = pgdir;
+  master->sz = sz;
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
+  *master->tf = *curproc->tf;
+  struct proc *p;
+  int fd;
   for(i = 0; i < NTHREAD; i++){
-    curproc->dealloc[i] = 0;
-    curproc->threads[i] = 0;
+    master->dealloc[i] = 0;
+    if(master->threads[i] != 0){
+      p = master->threads[i];
+      for(fd = 0; fd < NOFILE; fd++){
+        if(p->ofile[fd]){
+          fileclose(p->ofile[fd]);
+          p->ofile[fd] = 0;
+        }
+      }
+      // This thread will be collected by wait().
+      //acquire(&ptable.lock);
+      p->state = ZOMBIE;
+      //release(&ptable.lock);
+    }
   }
-  curproc->cnt_t = curproc->recent = 0;
-  switchuvm(curproc);
-  if(is_master)
-    freevm(oldpgdir);
+  master->cnt_t = master->recent = 0;
+  switchuvm(master);
+  freevm(oldpgdir);
   return 0;
 
  bad:
