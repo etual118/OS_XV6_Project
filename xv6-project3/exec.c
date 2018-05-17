@@ -142,6 +142,13 @@ exec(char *path, char **argv)
       //release(&ptable.lock);
     }
   }
+  wakeup(master->parent);
+  int x = 0;
+  for(i = 0; i < NTHREAD; i++){
+    if(master->threads[i] != 0)
+      x++;
+  }
+  cprintf("survive : %d\n", x);
   master->cnt_t = master->recent = 0;
   switchuvm(master);
   freevm(oldpgdir);
