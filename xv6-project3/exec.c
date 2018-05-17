@@ -164,14 +164,8 @@ mast2:
       continue;
     thread_clear(clear);
   }
-  if(!is_master){
-      //master->tinfo.master = curproc;
-      int j;
-      for(j = 0; j < NTHREAD; j++){
-        master->threads[j] = 0;
-      }
-      //freevm(master->pgdir);
-  }
+  if(!is_master)
+      freevm(master->pgdir);
   release(&ptable.lock);
 
   curproc->tinfo.master = 0;
@@ -187,8 +181,8 @@ mast2:
   }
   curproc->cnt_t = curproc->recent = 0;
   switchuvm(curproc);
-
-  freevm(oldpgdir);
+  if(is_master)
+    freevm(oldpgdir);
   return 0;
 
  bad:
