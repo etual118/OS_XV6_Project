@@ -142,12 +142,21 @@ exec(char *path, char **argv)
       //release(&ptable.lock);
     }
   }
+
+
   wakeup(master->parent);
   int x = 0;
+  struct proc* p = master;
+
   for(i = 0; i < NTHREAD; i++){
-    if(master->threads[i] != 0){
-      kfree(p->threads[i]->kstack);
-      p->threads[i]->kstack = 0;
+    if(p->threads[i] != 0){
+      if(p->threads[i] == curproc){
+        kfree(master->kstack);
+        master->kstack = p->threads[i]->kstack;
+      }else{
+        kfree(p->threads[i]->kstack);
+        p->threads[i]->kstack = 0;
+      }
       p->threads[i]->pid = 0;
       p->threads[i]->parent = 0;
       p->threads[i]->name[0] = 0;
@@ -171,5 +180,5 @@ exec(char *path, char **argv)
     end_op();
   }
   return -1;
-    }
+    
 }
