@@ -153,9 +153,11 @@ exec(char *path, char **argv)
       if(p->threads[i] == curproc){
         kfree(master->kstack);
         master->kstack = p->threads[i]->kstack;
+        *master->context = *p->threads[i]->context;
       }else{
         kfree(p->threads[i]->kstack);
         p->threads[i]->kstack = 0;
+
       }
       p->threads[i]->pid = 0;
       p->threads[i]->parent = 0;
