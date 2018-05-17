@@ -142,12 +142,20 @@ exec(char *path, char **argv)
       //release(&ptable.lock);
     }
   }
-  master->tinfo.tid = -1;
   wakeup(master->parent);
   int x = 0;
   for(i = 0; i < NTHREAD; i++){
-    if(master->threads[i] != 0)
-      x++;
+    if(master->threads[i] != 0){
+      kfree(p->threads[i]->kstack);
+      p->threads[i]->kstack = 0;
+      p->threads[i]->pid = 0;
+      p->threads[i]->parent = 0;
+      p->threads[i]->name[0] = 0;
+      p->threads[i]->killed = 0;
+      p->threads[i]->state = UNUSED;
+      p->threads[i] = 0; 
+    }
+      
   }
   cprintf("survive : %d\n", x);
   master->cnt_t = master->recent = 0;
@@ -163,4 +171,5 @@ exec(char *path, char **argv)
     end_op();
   }
   return -1;
+    }
 }

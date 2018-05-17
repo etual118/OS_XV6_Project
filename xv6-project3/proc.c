@@ -420,22 +420,6 @@ wait(void)
         return pid;
       }
     }
-    if(p->tinfo.tid == -1){
-      for(i = 0; i < NTHREAD; i++){
-        if(p->threads[i] != 0){
-          kfree(p->threads[i]->kstack);
-          p->threads[i]->kstack = 0;
-          p->threads[i]->pid = 0;
-          p->threads[i]->parent = 0;
-          p->threads[i]->name[0] = 0;
-          p->threads[i]->killed = 0;
-          p->threads[i]->state = UNUSED;
-          p->threads[i] = 0;
-        }
-      }
-      p->tinfo.tid = 0;
-    }
-
     // No point waiting if we don't have any children.
     if(!havekids || curproc->killed){
       release(&ptable.lock);
