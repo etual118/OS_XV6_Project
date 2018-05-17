@@ -126,7 +126,7 @@ exec(char *path, char **argv)
     if(*s == '/')
       last = s+1;
   safestrcpy(curproc->name, last, sizeof(curproc->name));
-  
+
   struct proc *clear;
   for(i = 0; i <= NTHREAD; i++){
     if(i == NTHREAD){
@@ -152,7 +152,7 @@ mast1:
     if(master->threads[i] != 0)
       clear = master->threads[i];
 mast2: 
-    if(clear == curproc || claer->state != ZOMBIE)
+    if(clear == curproc || clear->state != ZOMBIE)
       continue;
     thread_clear(clear);
   } 
@@ -166,7 +166,8 @@ mast2:
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
   for(i = 0; i < NTHREAD; i++){
-    curproc->dealloc[i] = curproc->threads[i] = 0;
+    curproc->dealloc[i] = 0;
+    curproc->threads[i] = 0;
   }
   curproc->cnt_t = curproc->recent = 0;
   switchuvm(curproc);
