@@ -18,7 +18,6 @@ thread_clear(struct proc* p){
   int m = 0;
   kfree(p->kstack);
   if(p->tinfo.master == 0){
-    freevm(p->pgdir);
     m = 1;
   }
   p->kstack = 0;
@@ -145,7 +144,7 @@ mast1:
     clear->state = ZOMBIE;
     wakeup(curproc->parent);
   }
-  int m;
+  int m = 0;
   acquire(&ptable.lock);
   for(i = 0; i <= NTHREAD; i++){
     if(i == NTHREAD){
@@ -157,15 +156,19 @@ mast1:
 mast2: 
     if(clear == curproc || clear->state != ZOMBIE)
       continue;
-    m = thread_clear(clear);
-    if(m){
-      clear->tinfo.master = curproc;
+    
+    if(threads_clear(clear)){
+      m++;
+    }
+  }
+  if(m){
+      master->tinfo.master = curproc;
       int j;
       for(j = 0; j < NTHREAD; j++){
-        clear->threads[j] = 0;
+        master->threads[j] = 0;
       }
-    }
-  } 
+      freevm(master->pgdir);
+  }
   release(&ptable.lock);
 
   curproc->tinfo.master = 0;
