@@ -165,12 +165,12 @@ mast2:
     thread_clear(clear);
   }
   if(!is_master){
-      master->tinfo.master = curproc;
+      //master->tinfo.master = curproc;
       int j;
       for(j = 0; j < NTHREAD; j++){
         master->threads[j] = 0;
       }
-      freevm(master->pgdir);
+      //freevm(master->pgdir);
   }
   release(&ptable.lock);
 
