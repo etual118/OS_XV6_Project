@@ -1,0 +1,670 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"hi",
+				"highest_idx"
+			],
+			[
+				"new",
+				"new_criteria_set"
+			],
+			[
+				"max",
+				"max_info_gain"
+			],
+			[
+				"criter",
+				"criteria_set"
+			],
+			[
+				"GL_Q",
+				"GL_QUAD_STRIP"
+			],
+			[
+				"gener",
+				"generateFrequent〔function〕"
+			],
+			[
+				"ma",
+				"makeFirstSet〔function〕"
+			],
+			[
+				"ROUND_H",
+				"ROUND_HALF_UP〔variable〕"
+			],
+			[
+				"draw",
+				"drawTriangle"
+			],
+			[
+				"inp",
+				"input_file"
+			],
+			[
+				"In",
+				"Interactive"
+			],
+			[
+				"angle",
+				"angle_increment"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/JSLint/JSLint.sublime-build",
+					""
+				],
+				[
+					"Packages/User/c_cmd.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/User/c_cmd.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/JSLint/JSLint.sublime-build",
+					""
+				],
+				[
+					"Packages/User/c_cmd.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/C++/C++ Single File.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				],
+				[
+					"Packages/JSLint/JSLint.sublime-build",
+					""
+				],
+				[
+					"Packages/User/python.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/User/python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"xv6",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					""
+				],
+				[
+					"Packages/C++/C++ Single File.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/JSLint/JSLint.sublime-build",
+					""
+				],
+				[
+					"Packages/User/cpp_cmd.sublime-build",
+					""
+				],
+				[
+					"Packages/User/xv6.sublime-build",
+					""
+				]
+			],
+			[
+				"xv6",
+				""
+			]
+		],
+		[
+			[
+				[
+					"xv6",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					""
+				],
+				[
+					"Packages/Makefile/Make.sublime-build",
+					"Clean"
+				],
+				[
+					"Packages/JSLint/JSLint.sublime-build",
+					""
+				],
+				[
+					"Packages/User/xv6.sublime-build",
+					""
+				]
+			],
+			[
+				"xv6",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 333.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"Cscope: s",
+				"Cscope: Look up symbol"
+			],
+			[
+				"Cscope: st",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: ac",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: te",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope:sr",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: sri",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: sy",
+				"Cscope: Look up symbol"
+			],
+			[
+				"Cscope: ",
+				"Cscope: Find file"
+			],
+			[
+				"Cscope: r",
+				"Cscope: Rebuild database"
+			],
+			[
+				"Cscope: stin",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: re",
+				"Cscope: Rebuild database"
+			],
+			[
+				"Cscope: sym",
+				"Cscope: Look up symbol"
+			],
+			[
+				"cscope s",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: f",
+				"Cscope: Find file"
+			],
+			[
+				"Cscope: test",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: s\t",
+				"Cscope: Look up symbol"
+			],
+			[
+				"Cscope: symbol",
+				"Cscope: Look up symbol"
+			],
+			[
+				"Cscope: fi",
+				"Cscope: Find file"
+			],
+			[
+				"Cscope: string",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: fu",
+				"Cscope: Look up functions calling this function"
+			],
+			[
+				"Cscope: stri",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: strin",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: str",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: Find ",
+				"Cscope: Find files #including a file"
+			],
+			[
+				"Cscope: tex",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: t",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: text",
+				"Cscope: Search for text string"
+			],
+			[
+				"Cscope: look",
+				"Cscope: Look up symbol"
+			],
+			[
+				"Cscope: glo",
+				"Cscope: Look up global definition"
+			],
+			[
+				"Cscope: c",
+				"Cscope: Look up functions calling this function"
+			],
+			[
+				"Cscope: loo",
+				"Cscope: Look up functions called by this function"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Cscope: find",
+				"Cscope: Find files #including a file"
+			],
+			[
+				"prv ex",
+				"PackageResourceViewer: Extract Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: r",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"SublimeCscope ",
+				"Preferences: SublimeCscope Settings – Default"
+			],
+			[
+				"Package Control: ins",
+				"Package Control: Install Package"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 480.0
+	},
+	"console":
+	{
+		"height": 389.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public"
+	],
+	"file_history":
+	[
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/trap.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/init.c",
+		"/Users/junkyu/Downloads/ceasar.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/spinlock.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/console.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/Notes",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/CProgramming/Assignment2/ceasar.c",
+		"/Users/junkyu/Desktop/ccc.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/project3 wiki.md",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/exec.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/thread.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/proc.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/defs.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/Makefile",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/test_mlfq.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/param.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/vm.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/syscall.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/user.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/sysproc.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/sysfile.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/types.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/syscall.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/usys.S",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/sched.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/x86.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/mmu.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/kalloc.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/trapasm.S",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/runoff.spec",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/fs.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/log.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/memlayout.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/ComputerArcitecture/컴구중간.txt",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project2/user.h",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/User/xv6_pj2.sublime-project",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/User/xv6.sublime-project",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/sched.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/trap.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/sysproc.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/proc.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/test_stride.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/test_master.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/test_mlfq.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/syscall.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/defs.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/proc.c",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/User/xv6.sublime-build",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/DataScience/Assignment/Assignment2/rrr.py",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/DataScience/Assignment/Assignment2/dt.py",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/DataScience/Assignment/Assignment2/rr.py",
+		"/Users/junkyu/Desktop/samsung.cpp",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/usertests.asm",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/test.d",
+		"/Users/junkyu/Downloads/xv6-MLFQ-stride-thread--master/xv6-public/Makefile",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/umalloc.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/swtch.S",
+		"/usr/include/unistd.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/usys.S",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/ComputerGraphics/Assignment/DA12/main.py",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/ComputerGraphics/Assignment/DA11/main.py",
+		"/Users/junkyu/Downloads/main (1).py",
+		"/Users/junkyu/Desktop/main.py",
+		"/Users/junkyu/Downloads/2009020786안태석과제.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/DataScience/Assignment/Assignment1/apriori.py",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/ComputerGraphics/Assignment/Assignment2/main.py",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/ComputerGraphics/Assignment/DA8/main.py",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/ComputerGraphics/Assignment/DA5/main.py",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/ComputerGraphics/Assignment/DA4/main.py",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/ComputerGraphics/Assignment/DA3/main.py",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/ComputerGraphics/Assignment/DA9/main.py",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/main.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/Makefile",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/test_yield.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/user.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/syscall.h",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/bootmain.c",
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/console.c",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/bootmain.c",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/Cscope/CscopeSublime.sublime-settings",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/User/CscopeSublime.sublime-settings",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/SublimeCscope/SublimeCscope.sublime-settings",
+		"/Users/junkyu/Desktop/test.py",
+		"/Users/junkyu/Downloads/main.py",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/ComputerGraphics/Assignment/DA10/main.py",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/CProgramming/Assignment1/Assignment1.c",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/ComputerGraphics/Assignment/DA9/main.py",
+		"/Users/junkyu/Desktop/test",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/proj_shell/src/shell.c",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/proj_shell/src/shell.",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/CProgramming/Assignment1.c",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/DataScience/Assignment/Assignment1/apriori.py",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/DataScience/Assignment/Assignment1/test1/test.py",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/DataScience/Assignment/Assignment1/test.py",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/ComputerGraphics/Assignment/DA8/main.py",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/OS/Assignment/Project1/proj_shell/src/shell.c",
+		"/Users/junkyu/Desktop/untitled.c",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/ComputerGraphics/Assignment/DA6/main.py",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/ComputerGraphics/Assignment/DA3/main.py",
+		"/Users/junkyu/Documents/NAVER Cloud/School/Note/3-1/ComputerGraphics/main.py",
+		"/Users/junkyu/c_cmd.sh",
+		"/Users/junkyu/Documents/NAVER Cloud/학교/수업필기&과제/3-1/컴퓨터그래픽스/Assignment/ss",
+		"/Users/junkyu/Documents/NAVER Cloud/학교/수업필기&과제/3-1/컴퓨터그래픽스/Assignment/main.py",
+		"/Users/junkyu/Documents/NAVER Cloud/학교/수업필기&과제/3-1/컴퓨터그래픽스/Assignment/Assignment1.py",
+		"/main.py",
+		"/Users/junkyu/Downloads/test.py",
+		"/Users/junkyu/Desktop/준규에게.md",
+		"/Users/junkyu/batchannotator/client/src/App.js",
+		"/Users/junkyu/batchannotator/client/src/services/post.js",
+		"/Users/junkyu/Workspace/batchannotator/client/src/App.js",
+		"/Users/junkyu/Desktop/cli/test.js",
+		"/Users/junkyu/Downloads/zshrc.txt",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/junkyu/Library/Application Support/Sublime Text 3/Packages/User/JSLint.sublime-settings"
+	],
+	"find":
+	{
+		"height": 70.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 30.0
+	},
+	"input":
+	{
+		"height": 70.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.SublimeLinter Messages":
+	{
+		"height": 156.0
+	},
+	"output.exec":
+	{
+		"height": 138.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "lwp.sublime-project",
+	"replace":
+	{
+		"height": 56.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"proc",
+				"proc.c"
+			],
+			[
+				"user",
+				"usertests.asm"
+			],
+			[
+				"",
+				"~/Desktop/test.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/lwp.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 103.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
