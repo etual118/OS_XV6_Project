@@ -12,33 +12,33 @@ extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 }ptable;
-/*
-void
-thread_clear(struct proc* p){
 
-  int fd;
-  for(fd = 0; fd < NOFILE; fd++){
-    if(p->ofile[fd]){
-      fileclose(p->ofile[fd]);
-      p->ofile[fd] = 0;
+void
+call_parent(struct proc *curproc, int mid){
+  struct proc *p;
+  int i;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == mid){
+      // Collect all other threads proc structure.
+      // It can works only in thread_join() is not called.
+      for(i = 0; i < NTHREAD; i++){
+        if(p->threads[i] != 0){
+          kfree(p->threads[i]->kstack);
+          p->threads[i]->kstack = 0;
+          p->threads[i]->pid = 0;
+          p->threads[i]->parent = 0;
+          p->threads[i]->name[0] = 0;
+          p->threads[i]->killed = 0;
+          p->threads[i]->state = UNUSED;
+          p->threads[i] = 0;
+        }
+      }
     }
   }
-
-  begin_op();
-  iput(p->cwd);
-  end_op();
-  p->cwd = 0;
-  cprintf("1\n");
-  kfree(p->kstack);
-  cprintf("2\n");
-  p->kstack = 0;
-  p->pid = 0;
-  p->parent = 0;
-  p->name[0] = 0;
-  p->killed = 0;
-  p->state = UNUSED;
+  release(&ptable.lock);
 }
-*/
+
 int
 exec(char *path, char **argv)
 {
@@ -133,6 +133,8 @@ exec(char *path, char **argv)
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
   *master->tf = *curproc->tf;
+  master->pid = curproc->pid;
+  
   for(i = 0; i < NTHREAD; i++){
     master->dealloc[i] = 0;
     if(master->threads[i] != 0){
@@ -142,7 +144,8 @@ exec(char *path, char **argv)
       //release(&ptable.lock);
     }
   }
-  wakeup(master->parent);
+  
+  call_parent(master->parent, master->pid);
   master->cnt_t = master->recent = 0;
   switchuvm(master);
   freevm(oldpgdir);
