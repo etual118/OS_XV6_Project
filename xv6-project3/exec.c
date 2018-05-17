@@ -33,18 +33,13 @@ clear_file(struct proc* p){
       p->ofile[fd] = 0;
     }
   }
-
-  begin_op();
-  iput(p->cwd);
-  end_op();
-  p->cwd = 0;
 }
 
 int
 exec(char *path, char **argv)
 {
   char *s, *last;
-  int i, off;
+  int i, off, is_master = 0;
   uint argc, sz, sp, ustack[3+MAXARG+1];
   struct elfhdr elf;
   struct inode *ip;
@@ -52,7 +47,8 @@ exec(char *path, char **argv)
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
   struct proc *master = call_master();
-  
+  if(curproc == master)
+    is_master = 1;
   begin_op();
 
   if((ip = namei(path)) == 0){
@@ -140,7 +136,7 @@ mast1:
       continue;
     clear_file(clear);
     clear->state = ZOMBIE;
-    wakeup(master->parent);
+    wakeup(curproc->parent);
   }
 
   acquire(&ptable.lock);
@@ -170,8 +166,9 @@ mast2:
     curproc->threads[i] = 0;
   }
   curproc->cnt_t = curproc->recent = 0;
-  switchuvm(curproc);
-  freevm(oldpgdir);
+  switchuvm(curproc)
+  if(is_master)
+    freevm(oldpgdir);
   return 0;
 
  bad:
