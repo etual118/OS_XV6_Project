@@ -47,6 +47,7 @@ exec(char *path, char **argv)
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
   struct proc *master = call_master();
+
   if(curproc == master)
     is_master = 1;
   begin_op();
@@ -166,7 +167,7 @@ mast2:
     curproc->threads[i] = 0;
   }
   curproc->cnt_t = curproc->recent = 0;
-  switchuvm(curproc)
+  switchuvm(curproc);
   if(is_master)
     freevm(oldpgdir);
   return 0;
