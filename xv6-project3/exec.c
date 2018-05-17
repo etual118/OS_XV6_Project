@@ -145,7 +145,7 @@ mast1:
     clear->state = ZOMBIE;
     wakeup(curproc->parent);
   }
-
+  int m;
   acquire(&ptable.lock);
   for(i = 0; i <= NTHREAD; i++){
     if(i == NTHREAD){
@@ -157,7 +157,8 @@ mast1:
 mast2: 
     if(clear == curproc || clear->state != ZOMBIE)
       continue;
-    if(thread_clear(clear)){
+    m = thread_clear(clear);
+    if(m){
       clear->tinfo.master = curproc;
       int j;
       for(j = 0; j < NTHREAD; j++){
