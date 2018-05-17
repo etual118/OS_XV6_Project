@@ -51,9 +51,7 @@ exec(char *path, char **argv)
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
   struct proc *master = call_master();
-  int is_master = 0;
-  if(curproc == master)
-    is_master = 1;
+
   begin_op();
 
   if((ip = namei(path)) == 0){
@@ -129,33 +127,28 @@ exec(char *path, char **argv)
   safestrcpy(curproc->name, last, sizeof(curproc->name));
 
   // Commit to the user image.
-  if(is_master){
-    oldpgdir = master->pgdir;
-    master->pgdir = pgdir;
-    master->sz = sz;
-    curproc->tf->eip = elf.entry;  // main
-    curproc->tf->esp = sp;
-    *master->tf = *curproc->tf;
-    for(i = 0; i < NTHREAD; i++){
-      master->dealloc[i] = 0;
-      if(master->threads[i] != 0){
-        // This thread will be collected by wait().
-        //acquire(&ptable.lock);
-        kfree(master->threads[i]->kstack);
-        master->threads[i]->state = UNUSED;
-        master->threads[i] = 0;
-        //release(&ptable.lock);
-      }
+  oldpgdir = master->pgdir;
+  master->pgdir = pgdir;
+  master->sz = sz;
+  curproc->tf->eip = elf.entry;  // main
+  curproc->tf->esp = sp;
+  *master->tf = *curproc->tf;
+  for(i = 0; i < NTHREAD; i++){
+    master->dealloc[i] = 0;
+    if(master->threads[i] != 0){
+      // This thread will be collected by wait().
+      //acquire(&ptable.lock);
+      master->threads[i]->state = ZOMBIE;
+      //release(&ptable.lock);
     }
-    master->cnt_t = master->recent = 0;
-    switchuvm(master);
-    freevm(oldpgdir);
-    return 0;
-  }else{
-
-    return 0;
   }
-bad:
+  wakeup(master->parent);
+  master->cnt_t = master->recent = 0;
+  switchuvm(master);
+  freevm(oldpgdir);
+  return 0;
+
+ bad:
   if(pgdir)
     freevm(pgdir);
   if(ip){

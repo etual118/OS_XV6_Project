@@ -353,7 +353,7 @@ void*
 execthreadmain(void *arg)
 {
   char *args[3] = {"echo", "echo is executed!", 0}; 
-  sleep(1000);
+  sleep(1);
   exec("echo", args);
 
   printf(1, "panic at execthreadmain\n");
@@ -373,8 +373,6 @@ exectest(void)
       return -1;
     }
   }
-  char *args[3] = {"echo", "echo is executed!", 0}; 
-  exec("echo", args);
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) != 0){
       printf(1, "panic at thread_join\n");
