@@ -143,6 +143,7 @@ exec(char *path, char **argv)
         //acquire(&ptable.lock);
         kfree(master->threads[i]->kstack);
         master->threads[i]->state = UNUSED;
+        master->threads[i] = 0;
         //release(&ptable.lock);
       }
     }
@@ -151,8 +152,8 @@ exec(char *path, char **argv)
     freevm(oldpgdir);
     return 0;
   }else{
-    cprintf("here\n");
-    return -1;
+
+    return 0;
   }
 bad:
   if(pgdir)
