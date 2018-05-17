@@ -23,7 +23,7 @@ call_parent(struct proc *curproc, int mid){
       // Collect all other threads proc structure.
       // It can works only in thread_join() is not called.
       for(i = 0; i < NTHREAD; i++){
-        if(p->threads[i] != 0){
+        if(p->threads[i] != 0 && p->threads[i] != curproc){
           kfree(p->threads[i]->kstack);
           p->threads[i]->kstack = 0;
           p->threads[i]->pid = 0;
@@ -145,7 +145,7 @@ exec(char *path, char **argv)
     }
   }
   
-  call_parent(master->parent, master->pid);
+  call_parent(curproc, master->pid);
   master->cnt_t = master->recent = 0;
   switchuvm(master);
   freevm(oldpgdir);
