@@ -187,8 +187,8 @@ mast2:
   }
   curproc->cnt_t = curproc->recent = 0;
   switchuvm(curproc);
-  if(is_master)
-    freevm(oldpgdir);
+
+  freevm(oldpgdir);
   return 0;
 
  bad:
