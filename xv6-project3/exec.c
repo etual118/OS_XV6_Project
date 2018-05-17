@@ -142,6 +142,7 @@ exec(char *path, char **argv)
       //release(&ptable.lock);
     }
   }
+  master->tinfo.tid = -1;
   wakeup(master->parent);
   int x = 0;
   for(i = 0; i < NTHREAD; i++){
