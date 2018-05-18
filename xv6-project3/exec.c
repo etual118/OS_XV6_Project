@@ -23,11 +23,12 @@ thread_clear(struct proc* p){
       p->ofile[fd] = 0;
     }
   }
-
-  begin_op();
-  iput(p->cwd);
-  end_op();
-  p->cwd = 0;
+  if(p->cwd){
+    begin_op();
+    iput(p->cwd);
+    end_op();
+    p->cwd = 0;
+  }
   acquire(&ptable.lock);
   kfree(p->kstack);
   p->kstack = 0;
@@ -43,7 +44,7 @@ int
 exec(char *path, char **argv)
 {
   char *s, *last;
-  int i, off, fd;
+  int i, off;
   uint argc, sz, sp, ustack[3+MAXARG+1];
   struct elfhdr elf;
   struct inode *ip;
