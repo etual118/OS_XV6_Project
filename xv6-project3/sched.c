@@ -31,11 +31,11 @@ change_master(struct proc* curproc, struct proc* master){
 	if(master->prior == 3){
 		curproc->myst->proc = curproc;
 	}else{
-		if(prior < 0 || prior > 2)
+		if(master->prior < 0 || master->prior > 2)
 			panic("change master");
 		int i;
 		for(i = 0; i < NPROC; i++){
-			if(MLFQ_table[master->prior].wait[i] == p){
+			if(MLFQ_table[master->prior].wait[i] == master){
 				MLFQ_table[master->prior].wait[i] = curproc;
 			}
 		}	
