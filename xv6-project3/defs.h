@@ -133,6 +133,7 @@ void 			scheduler(void);
 int 			set_cpu_share(int inquire);
 void 			stride_adder(struct stride *s);
 int 			MLFQ_tick_adder(void);
+void			change_master(struct proc* curproc, struct proc* master);
 // swtch.S
 void            swtch(struct context**, struct context*);
 

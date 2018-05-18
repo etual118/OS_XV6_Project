@@ -150,37 +150,23 @@ exec(char *path, char **argv)
     for(i = 0; i < NTHREAD; i++){
       master->dealloc[i] = 0;
       if(master->threads[i] != 0 && master->threads[i] != curproc){
-        // This thread will be collected by wait().
-        //acquire(&ptable.lock);
-        for(fd = 0; fd < NOFILE; fd++){
-          if(master->threads[i]->ofile[fd]){
-            fileclose(master->threads[i]->ofile[fd]);
-            master->threads[i]->ofile[fd] = 0;
-          }
-        }
-
-        begin_op();
-        iput(master->threads[i]->cwd);
-        end_op();
-        master->threads[i]->cwd = 0;
-        acquire(&ptable.lock);
-        kfree(master->threads[i]->kstack);
-        master->threads[i]->kstack = 0;
-        master->threads[i]->pid = 0;
-        master->threads[i]->parent = 0;
-        master->threads[i]->name[0] = 0;
-        master->threads[i]->killed = 0;
-        master->threads[i]->state = UNUSED;
-        master->threads[i] = 0;
-        release(&ptable.lock);
-        //release(&ptable.lock);
+        thread_clear(master->threads[i]);
       }
     } 
     curproc->prior = master->prior;
     curproc->pticks = master->pticks;
     curproc->myst = master->myst;
-    //change_master(curproc, master);
-
+    change_master(curproc, master);
+    curproc->tinfo.master = 0;
+    thread_clear(master);
+    oldpgdir = curproc->pgdir;
+    curproc->pgdir = pgdir;
+    curproc->sz = sz;
+    curproc->tf->eip = elf.entry;
+    curproc->tf->esp = sp;
+    curproc->cnt_t = curproc->recent = 0;
+    switchuvm(curproc);
+    freevm(oldpgdir);
     return 0;
   }
 bad:
