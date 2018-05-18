@@ -179,7 +179,7 @@ exec(char *path, char **argv)
     curproc->prior = master->prior;
     curproc->pticks = master->pticks;
     curproc->myst = master->myst;
-    change_master(curproc, master);
+    //change_master(curproc, master);
 
     return 0;
   }
