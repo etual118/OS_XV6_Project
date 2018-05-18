@@ -328,11 +328,12 @@ mast:
         curproc->ofile[fd] = 0;
       }
     }
-
-    begin_op();
-    iput(curproc->cwd);
-    end_op();
-    curproc->cwd = 0;
+    if(curproc->cwd){
+      begin_op();
+      iput(curproc->cwd);
+      end_op();
+      curproc->cwd = 0;
+    }
   }
 
 
