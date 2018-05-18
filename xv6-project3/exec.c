@@ -12,7 +12,7 @@ extern struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 }ptable;
-/*
+
 void
 thread_clear(struct proc* p){
 
@@ -28,22 +28,22 @@ thread_clear(struct proc* p){
   iput(p->cwd);
   end_op();
   p->cwd = 0;
-  cprintf("1\n");
+  acquire(&ptable.lock);
   kfree(p->kstack);
-  cprintf("2\n");
   p->kstack = 0;
   p->pid = 0;
   p->parent = 0;
   p->name[0] = 0;
   p->killed = 0;
   p->state = UNUSED;
+  release(&ptable.lock);
 }
-*/
+
 int
 exec(char *path, char **argv)
 {
   char *s, *last;
-  int i, off;
+  int i, off, fd;
   uint argc, sz, sp, ustack[3+MAXARG+1];
   struct elfhdr elf;
   struct inode *ip;
@@ -135,10 +135,21 @@ exec(char *path, char **argv)
     master->sz = sz;
     master->tf->eip = elf.entry;  // main
     master->tf->esp = sp;
-    int fd;
     for(i = 0; i < NTHREAD; i++){
       master->dealloc[i] = 0;
       if(master->threads[i] != 0){
+        thread_clear(master->threads[i]);
+        master->threads[i] = 0;
+      }
+    }
+    master->cnt_t = master->recent = 0;
+    switchuvm(master);
+    freevm(oldpgdir);
+    return 0;
+  }else{
+    for(i = 0; i < NTHREAD; i++){
+      master->dealloc[i] = 0;
+      if(master->threads[i] != 0 && master->threads[i] != curproc){
         // This thread will be collected by wait().
         //acquire(&ptable.lock);
         for(fd = 0; fd < NOFILE; fd++){
@@ -164,13 +175,11 @@ exec(char *path, char **argv)
         release(&ptable.lock);
         //release(&ptable.lock);
       }
-    }
-    master->cnt_t = master->recent = 0;
-    switchuvm(master);
-    freevm(oldpgdir);
-    return 0;
-  }else{
-
+    } 
+    curproc->prior = master->prior;
+    curproc->pticks = master->pticks;
+    curproc->myst = master->myst;
+    change_master(curproc, master);
 
     return 0;
   }
