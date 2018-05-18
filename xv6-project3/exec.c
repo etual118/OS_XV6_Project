@@ -136,7 +136,6 @@ exec(char *path, char **argv)
     master->tf->eip = elf.entry;  // main
     master->tf->esp = sp;
     int fd;
-    acquire(&ptable.lock);
     for(i = 0; i < NTHREAD; i++){
       master->dealloc[i] = 0;
       if(master->threads[i] != 0){
@@ -153,6 +152,7 @@ exec(char *path, char **argv)
         iput(master->threads[i]->cwd);
         end_op();
         master->threads[i]->cwd = 0;
+        acquire(&ptable.lock);
         kfree(master->threads[i]->kstack);
         master->threads[i]->kstack = 0;
         master->threads[i]->pid = 0;
@@ -161,10 +161,10 @@ exec(char *path, char **argv)
         master->threads[i]->killed = 0;
         master->threads[i]->state = UNUSED;
         master->threads[i] = 0;
+        release(&ptable.lock);
         //release(&ptable.lock);
       }
     }
-    release(&ptable.lock);
     master->cnt_t = master->recent = 0;
     switchuvm(master);
     freevm(oldpgdir);
