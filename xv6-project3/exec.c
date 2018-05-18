@@ -133,10 +133,10 @@ exec(char *path, char **argv)
     oldpgdir = master->pgdir;
     master->pgdir = pgdir;
     master->sz = sz;
-    curproc->tf->eip = elf.entry;  // main
-    curproc->tf->esp = sp;
-    *master->tf = *curproc->tf;
+    master->tf->eip = elf.entry;  // main
+    master->tf->esp = sp;
     int fd;
+    acquire(&ptable.lock);
     for(i = 0; i < NTHREAD; i++){
       master->dealloc[i] = 0;
       if(master->threads[i] != 0){
@@ -164,11 +164,13 @@ exec(char *path, char **argv)
         //release(&ptable.lock);
       }
     }
+    release(&ptable.lock);
     master->cnt_t = master->recent = 0;
     switchuvm(master);
     freevm(oldpgdir);
     return 0;
   }else{
+
 
     return 0;
   }
