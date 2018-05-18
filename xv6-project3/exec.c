@@ -148,7 +148,8 @@ exec(char *path, char **argv)
     return 0;
   }else{
     for(i = 0; i < NTHREAD; i++){
-      master->dealloc[i] = 0;
+      curproc->dealloc[i] = 0;
+      curproc->threads[i] = 0;
       if(master->threads[i] != 0 && master->threads[i] != curproc){
         thread_clear(master->threads[i]);
       }
