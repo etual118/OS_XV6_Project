@@ -198,8 +198,10 @@ thread_join(thread_t thread, void **retval){
 	struct proc *join = thread;
 	acquire(&ptable.lock);
 	// Master thread sleep while thread running.
-	while(join->state != ZOMBIE)
+	while(join->state != ZOMBIE){
+		procdump();
 		sleep(thread->tinfo.master, &ptable.lock);
+	}
 
 	// Dealloc ustack and kstack.
 	if(deallocstack(join) < 0){
