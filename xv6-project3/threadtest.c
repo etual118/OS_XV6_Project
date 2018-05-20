@@ -451,7 +451,6 @@ forktest2(void)
   thread_t threads[NUM_THREAD];
   int i;
   void *retval;
-  int cnt = 0;
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_create(&threads[i], forkmain, (void*)i) != 0){
       printf(1, "panic at thread_create\n");
