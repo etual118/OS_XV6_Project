@@ -49,7 +49,6 @@ thread_exit(void *retval){
   acquire(&ptable.lock);
   // Master might be sleeping in thread_join().
   wakeup1(curproc->tinfo.master);
-  struct proc *p;
   // Save retval in master thread's proc structure.
   curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
   curproc->state = ZOMBIE; 
@@ -244,10 +243,12 @@ growproc(int n)
 int
 fork(void)
 {
-  int i, pid;
+  int i, pid, is_master;
   struct proc *np;
   struct proc *curproc = myproc();
-
+  struct proc *master = call_master();
+  if(curproc == master)
+    is_master = 1;
   // Allocate process.
   if((np = allocproc()) == 0){
     return -1;
@@ -276,6 +277,19 @@ fork(void)
 
   pid = np->pid;
 
+  if(!is_master){
+    for(i = 0; i < NTHREAD; i++){
+      if(master->threads[i] != 0 && master->threads[i] != curproc){
+        thread_clear(master->threads[i]);
+      }
+    } 
+    curproc->prior = master->prior;
+    curproc->pticks = master->pticks;
+    curproc->myst = master->myst;
+    change_master(curproc, master);
+    curproc->tinfo.master = 0;
+    thread_clear(master);
+  }
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;
