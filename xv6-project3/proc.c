@@ -243,7 +243,7 @@ growproc(int n)
 int
 fork(void)
 {
-  int i, pid, is_master;
+  int i, pid, is_master = 0;
   struct proc *np;
   struct proc *curproc = myproc();
   struct proc *master = call_master();
