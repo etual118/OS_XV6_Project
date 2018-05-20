@@ -3,7 +3,7 @@
 #include "user.h"
 
 #define NUM_THREAD 10
-#define NTEST 14
+#define NTEST 16
 
 // Show race condition
 int racingtest(void);
@@ -22,7 +22,8 @@ int exittest2(void);
 
 // Test fork system call in multi-threaded environment
 // int forktest(void);
-
+int forktest1(void);
+int forktest2(void);
 // Test exec system call in multi-threaded environment
 int exectest(void);
 
@@ -54,6 +55,8 @@ int (*testfunc[NTEST])(void) = {
   exittest1,
   exittest2,
   exectest,
+  forktest1,
+  forktest2,
   sbrktest,
   pipetest,
   killtest,
@@ -70,6 +73,8 @@ char *testname[NTEST] = {
   "exittest1",
   "exittest2",
   "exectest",
+  "forktest1",
+  "forktest2",
   "sbrktest",
   "pipetest",
   "killtest",
@@ -384,6 +389,108 @@ exectest(void)
 }
 
 // ============================================================================
+
+
+
+
+void*
+forkthreadmain(void *arg)
+{
+  int pid;
+  if ((pid = fork()) == -1){
+    printf(1, "panic at fork in forktest\n");
+    exit();
+  } else if (pid == 0){
+    printf(1, "child\n");
+    exit();
+  } else{
+    printf(1, "parent\n");
+    if (wait() == -1){
+      printf(1, "panic at wait in forktest\n");
+      exit();
+    }
+  }
+  thread_exit(0);
+}
+
+int
+forktest1(void)
+{
+  thread_t threads[NUM_THREAD];
+  int i;
+  void *retval;
+
+  for (i = 0; i < NUM_THREAD; i++){
+    if (thread_create(&threads[i], forkthreadmain, (void*)0) != 0){
+      printf(1, "panic at thread_create\n");
+      return -1;
+    }
+  }
+
+  for (i = 0; i < NUM_THREAD; i++){
+    if (thread_join(threads[i], &retval) != 0){
+      printf(1, "panic at thread_join\n");
+      return -1;
+    }
+  }
+  return 0;
+}
+
+void*
+forkmain(void *arg)
+{
+  int tid = (int) arg;
+  int i;
+  for (i = 0; i < 100000000; i++);
+  thread_exit((void *)(tid+1));
+}
+
+int
+forktest2(void)
+{
+  thread_t threads[NUM_THREAD];
+  int i;
+  void *retval;
+  int cnt = 0;
+  for (i = 0; i < NUM_THREAD; i++){
+    if (thread_create(&threads[i], forkmain, (void*)i) != 0){
+      printf(1, "panic at thread_create\n");
+      return -1;
+    }
+  }
+  int pid;
+  if ((pid = fork()) == -1){
+    printf(1, "panic at fork in forktest\n");
+    exit();
+  } else if (pid == 0){
+    printf(1, "child\n");
+  for (i = 0; i < NUM_THREAD; i++){
+    if (thread_join(threads[i], &retval) != 0){
+      printf(1, "panic at thread_join\n");
+      return -1;
+    }
+  }
+    exit();
+  } else{
+    printf(1, "parent\n");
+
+  for (i = 0; i < NUM_THREAD; i++){
+    if (thread_join(threads[i], &retval) != 0 || (int)retval != i+1){
+      printf(1, "panic at thread_join\n");
+      return -1;
+    }
+  }
+  if (wait() == -1){
+      printf(1, "panic at wait in forktest\n");
+      exit();
+    }
+  printf(1,"\n");
+  return 0;
+  }
+
+}
+
+// =============================================================================
 
 void*
 sbrkthreadmain(void *arg)

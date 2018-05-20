@@ -25,7 +25,7 @@ void            panic(char*) __attribute__((noreturn));
 
 // exec.c
 int             exec(char*, char**);
-
+void 			thread_clear(struct proc* p);
 // file.c
 struct file*    filealloc(void);
 void            fileclose(struct file*);
@@ -134,6 +134,7 @@ int 			set_cpu_share(int inquire);
 void 			stride_adder(struct stride *s);
 int 			MLFQ_tick_adder(void);
 void			change_master(struct proc* curproc, struct proc* master);
+
 // swtch.S
 void            swtch(struct context**, struct context*);
 
