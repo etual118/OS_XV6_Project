@@ -462,16 +462,17 @@ forktest2(void)
     printf(1, "panic at fork in forktest\n");
     exit();
   } else if (pid == 0){
-    printf(1, "child\n");
+    
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) == 0){
       printf(1, "panic at thread_join\n");
       return -1;
     }
   }
+    printf(1, "child of %d\n", getppid());
     exit();
   } else{
-    printf(1, "parent\n");
+    printf(1, "parent %d\n", getpid());
 
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) != 0 || (int)retval != i+1){
