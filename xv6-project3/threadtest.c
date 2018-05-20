@@ -332,7 +332,7 @@ exittest1(void)
       return -1;
     }
   }
-  sleep(100);
+  sleep(1);
   return 0;
 }
 
