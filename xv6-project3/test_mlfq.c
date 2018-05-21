@@ -21,7 +21,7 @@ forkthread(void *arg)
             exit();
         }
     }
-    hthread_exit(0);
+    thread_exit(0);
 }
 
 int
