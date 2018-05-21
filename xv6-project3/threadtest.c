@@ -469,10 +469,10 @@ forktest2(void)
       return -1;
     }
   }
-    printf(1, "child of %d\n", getppid());
+    printf(1, "child\n");
     exit();
   } else{
-    printf(1, "parent %d\n", getpid());
+    printf(1, "parent\n");
 
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) != 0 || (int)retval != i+1){

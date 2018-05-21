@@ -49,6 +49,14 @@ thread_exit(void *retval){
   acquire(&ptable.lock);
   // Master might be sleeping in thread_join().
   wakeup1(curproc->tinfo.master);
+  struct proc *p;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->parent == curproc){
+      p->parent = initproc;
+      if(p->state == ZOMBIE)
+        wakeup1(initproc);
+    }
+  }  
   // Save retval in master thread's proc structure.
   curproc->tinfo.master->ret[curproc->tinfo.tid] = retval;
   curproc->state = ZOMBIE; 
@@ -243,12 +251,13 @@ growproc(int n)
 int
 fork(void)
 {
-  int i, pid, is_master = 0;
+  int i, pid;
+  //int is_master = 0;
   struct proc *np;
   struct proc *curproc = myproc();
-  struct proc *master = call_master();
-  if(curproc == master)
-    is_master = 1;
+  // struct proc *master = call_master();
+  // if(curproc == master)
+  //   is_master = 1;
   // Allocate process.
   if((np = allocproc()) == 0){
     return -1;
@@ -272,11 +281,12 @@ fork(void)
     if(curproc->ofile[i])
       np->ofile[i] = filedup(curproc->ofile[i]);
   np->cwd = idup(curproc->cwd);
-
+  
   safestrcpy(np->name, curproc->name, sizeof(curproc->name));
 
   pid = np->pid;
-
+  //is it needed? not in posix
+/*
   if(!is_master){
     for(i = 0; i < NTHREAD; i++){
       if(master->threads[i] != 0 && master->threads[i] != curproc){
@@ -290,6 +300,7 @@ fork(void)
     curproc->tinfo.master = 0;
     thread_clear(master);
   }
+  */
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;
