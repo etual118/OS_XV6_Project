@@ -1,47 +1,61 @@
+/**
+ *  This program periodically counts the level(priority) of queue of the
+ * MLFQ scheduler which is containing this process.
+ *  Periodically yield if given parameter value is 1
+ *  Do not yield itself if given parameter value is 0
+ */
+
 #include "types.h"
 #include "stat.h"
 #include "user.h"
 
-#define NUM_THREAD 10
+#define LIFETIME        200000000   // (iteration)
+#define YIELD_PERIOD    10000       // (iteration)
 
-void*
-forkthread(void *arg)
-{
-    int pid;
-    if ((pid = fork()) == -1) {
-        printf(1, "panic at fork in forktest\n");
-        exit();
-    } else if (pid == 0) {
-        printf(1, "child\n");
-        exit();
-    } else {
-        printf(1, "parent\n");
-        if (wait() != pid) {
-            printf(1, "panic at wait in forktest\n");
-            exit();
-        }
-    }
-    thread_exit(0);
-}
+// Number of level(priority) of MLFQ scheduler
+#define MLFQ_LEVEL      3
 
 int
 main(int argc, char *argv[])
 {
-    thread_t threads[NUM_THREAD];
-    int i;
-    void *retval;
-    
-    for (i = 0; i < NUM_THREAD; i++) {
-        if (thread_create(&threads[i], forkthread, (void*)0) != 0) {
-            printf(1, "panic at hthread_create\n");
-            return -1;
+    uint i;
+    int cnt_level[MLFQ_LEVEL] = {0, 0, 0};
+    int do_yield;
+    int curr_mlfq_level;
+
+    if (argc < 2) {
+        printf(1, "usage: sched_test_mlfq do_yield_or_not(0|1)\n");
+        exit();
+    }
+
+    do_yield = atoi(argv[1]);
+
+    i = 0;
+    while (1) {
+        i++;
+        
+        // Prevent code optimization
+        __sync_synchronize();
+
+        if (i % YIELD_PERIOD == 0) {
+            // Get current MLFQ level(priority) of this process
+            curr_mlfq_level = getlev();
+            cnt_level[curr_mlfq_level]++;
+
+            if (i > LIFETIME) {
+                printf(1, "MLFQ(%s), lev[0]: %d, lev[1]: %d, lev[2]: %d\n",
+                        do_yield==0 ? "compute" : "yield",
+                        cnt_level[0], cnt_level[1], cnt_level[2]);
+                break;
+            }
+
+            if (do_yield) {
+                // Yield process itself, not by timer interrupt
+                yield();
+            }
         }
     }
-    for (i = 0; i < NUM_THREAD; i++) {
-        if (thread_join(threads[i], &retval) != 0) {
-            printf(1, "panic at hthread_join\n");
-            return -1;
-        }
-    }
-    exit();
+
+    exit();     
 }
+
