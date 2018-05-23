@@ -1693,6 +1693,9 @@
 						],
 						"settings":
 						{
+							"SL.1093.region_keys":
+							[
+							],
 							"SL.178.region_keys":
 							[
 							],
@@ -1710,8 +1713,8 @@
 								{
 									"1":
 									[
-										6970,
-										6971
+										3685,
+										3686
 									]
 								},
 								"icon":
@@ -1726,8 +1729,8 @@
 								{
 									"1":
 									[
-										5648,
-										5649
+										2561,
+										2562
 									]
 								},
 								"unmatched":
@@ -1885,7 +1888,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 10880.0,
+						"translation.y": 2087.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
