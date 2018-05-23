@@ -3,7 +3,7 @@
 #include "user.h"
 
 #define NUM_THREAD 10
-#define NTEST 16
+#define NTEST 15
 
 // Show race condition
 int racingtest(void);
@@ -23,7 +23,6 @@ int exittest2(void);
 // Test fork system call in multi-threaded environment
 // int forktest(void);
 int forktest1(void);
-int forktest2(void);
 // Test exec system call in multi-threaded environment
 int exectest(void);
 
@@ -47,6 +46,7 @@ int gcnt;
 int gpipe[2];
 
 int (*testfunc[NTEST])(void) = {
+  killtest,
   racingtest,
   basictest,
   jointest1,
@@ -56,15 +56,14 @@ int (*testfunc[NTEST])(void) = {
   exittest2,
   exectest,
   forktest1,
-  forktest2,
   sbrktest,
   pipetest,
-  killtest,
   sleeptest,
   stridetest1,
   stridetest2,
 };
 char *testname[NTEST] = {
+  "killtest",
   "racingtest",
   "basictest",
   "jointest1",
@@ -74,10 +73,8 @@ char *testname[NTEST] = {
   "exittest2",
   "exectest",
   "forktest1",
-  "forktest2",
   "sbrktest",
   "pipetest",
-  "killtest",
   "sleeptest",
   "stridetest1",
   "stridetest2",

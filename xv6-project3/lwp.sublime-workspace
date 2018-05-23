@@ -115,7 +115,7 @@
 			"file": "test_mlfq.c",
 			"settings":
 			{
-				"buffer_size": 976,
+				"buffer_size": 1491,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -1866,15 +1866,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 976,
+						"buffer_size": 1491,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								460,
-								460
+								1491,
+								1491
 							]
 						],
 						"settings":
@@ -1973,27 +1973,12 @@
 							{
 								"close":
 								{
-									"1":
-									[
-										476,
-										477
-									]
 								},
 								"icon":
 								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/curly_bracket.png",
-										"region.purplish"
-									]
 								},
 								"open":
 								{
-									"1":
-									[
-										107,
-										108
-									]
 								},
 								"unmatched":
 								{
@@ -2063,7 +2048,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 265.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,

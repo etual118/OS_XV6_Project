@@ -13,6 +13,7 @@ extern struct {
   struct proc proc[NPROC];
 }ptable;
 
+// clear all thread directly to UNUSED
 void
 thread_clear(struct proc* p){
 
@@ -130,6 +131,7 @@ exec(char *path, char **argv)
   safestrcpy(curproc->name, last, sizeof(curproc->name));
 
   // Commit to the user image.
+  // If master clear all worker thread it has.
   if(is_master){
     oldpgdir = master->pgdir;
     master->pgdir = pgdir;
@@ -147,6 +149,8 @@ exec(char *path, char **argv)
     switchuvm(master);
     freevm(oldpgdir);
     return 0;
+  // if it is workter thread, kill other workter thread and master
+  // then it comes to master thread after exec
   }else{
     for(i = 0; i < NTHREAD; i++){
       curproc->dealloc[i] = 0;

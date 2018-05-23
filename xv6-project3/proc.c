@@ -160,6 +160,7 @@ found:
   p->myst = s_cand; // so its scheduler is determined by MLFQ, its stride is s_cand[0] - project 2
   p->tinfo.master = 0;
   p->cnt_t = 0;
+  p->killed = 0;
   int i;
   for(i = 0; i < NTHREAD; i++){
     p->ret[i] = 0;
@@ -252,12 +253,8 @@ int
 fork(void)
 {
   int i, pid;
-  //int is_master = 0;
   struct proc *np;
   struct proc *curproc = myproc();
-  // struct proc *master = call_master();
-  // if(curproc == master)
-  //   is_master = 1;
   // Allocate process.
   if((np = allocproc()) == 0){
     return -1;
@@ -285,28 +282,9 @@ fork(void)
   safestrcpy(np->name, curproc->name, sizeof(curproc->name));
 
   pid = np->pid;
-  //is it needed? not in posix
-/*
-  if(!is_master){
-    for(i = 0; i < NTHREAD; i++){
-      if(master->threads[i] != 0 && master->threads[i] != curproc){
-        thread_clear(master->threads[i]);
-      }
-    } 
-    curproc->prior = master->prior;
-    curproc->pticks = master->pticks;
-    curproc->myst = master->myst;
-    change_master(curproc, master);
-    curproc->tinfo.master = 0;
-    thread_clear(master);
-  }
-  */
   acquire(&ptable.lock);
-
   np->state = RUNNABLE;
-
   release(&ptable.lock);
-
   return pid;
 }
 
