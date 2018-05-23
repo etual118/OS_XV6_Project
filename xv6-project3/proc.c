@@ -387,7 +387,6 @@ wait(void)
       if(p->state == ZOMBIE){
         // Collect all other threads proc structure.
         // It can works only in thread_join() is not called.
-        freevm(p->pgdir);
         for(i = 0; i < NTHREAD; i++){
           if(p->threads[i] != 0){
             
@@ -404,7 +403,7 @@ wait(void)
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
-        
+        freevm(p->pgdir);
         p->pid = 0;
         p->parent = 0;
         p->name[0] = 0;

@@ -290,12 +290,12 @@
 		"selected_items":
 		[
 			[
-				"Cscope: st",
-				"Cscope: Search for text string"
-			],
-			[
 				"Cscope: s",
 				"Cscope: Look up symbol"
+			],
+			[
+				"Cscope: st",
+				"Cscope: Search for text string"
 			],
 			[
 				"Cscope: ac",
@@ -475,6 +475,7 @@
 	],
 	"file_history":
 	[
+		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/kalloc.c",
 		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/proc.c",
 		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-public/syscall.c",
 		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/types.h",
@@ -506,7 +507,6 @@
 		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/sched.c",
 		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/x86.h",
 		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/mmu.h",
-		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/kalloc.c",
 		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/trapasm.S",
 		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/runoff.spec",
 		"/Users/junkyu/Documents/NAVERCloud/School/Note/3-1/OS/Project/2018_ELE3021_2014004248/xv6-project3/fs.c",
@@ -1687,13 +1687,16 @@
 						"selection":
 						[
 							[
-								3561,
-								3561
+								8878,
+								8878
 							]
 						],
 						"settings":
 						{
 							"SL.1093.region_keys":
+							[
+							],
+							"SL.1156.region_keys":
 							[
 							],
 							"SL.178.region_keys":
@@ -1713,8 +1716,8 @@
 								{
 									"1":
 									[
-										3685,
-										3686
+										9578,
+										9579
 									]
 								},
 								"icon":
@@ -1729,8 +1732,8 @@
 								{
 									"1":
 									[
-										2561,
-										2562
+										8763,
+										8764
 									]
 								},
 								"unmatched":
@@ -1801,8 +1804,8 @@
 								{
 									"1":
 									[
-										3684,
-										3685
+										9566,
+										9567
 									]
 								},
 								"icon":
@@ -1817,8 +1820,8 @@
 								{
 									"1":
 									[
-										2561,
-										2562
+										8763,
+										8764
 									]
 								},
 								"unmatched":
@@ -1888,7 +1891,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2087.0,
+						"translation.y": 6916.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
