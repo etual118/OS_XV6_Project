@@ -428,7 +428,7 @@ bmap(struct inode *ip, uint bn)
   }
   bn -= NDINDIRECT;
 
-  if(bn < NINDIRECT){
+  if(bn < NTINDIRECT){
 
     int s_idx = bn / NDINDIRECT;
     int d_idx = (bn % NDINDIRECT) / NINDIRECT;
