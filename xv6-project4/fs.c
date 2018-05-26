@@ -531,9 +531,9 @@ itrunc(struct inode *ip)
             for(k = 0; k < NINDIRECT; k++)
               if(ta[k])
                 bfree(ip->dev, ta[k]);
+            brelse(tbp);
+            bfree(ip->dev, da[j]);
           }
-          brelse(tbp);
-          bfree(ip->dev, da[j]);
         }
         brelse(dbp);
         bfree(ip->dev, a[i]);
