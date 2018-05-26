@@ -399,7 +399,7 @@ bmap(struct inode *ip, uint bn)
   bn -= NINDIRECT;
 
   if(bn < NTINDIRECT){
-    cprintf("now triple!\n")
+    cprintf("now triple!\n");
     int d_idx = bn / NINDIRECT;
     int t_idx = bn % NINDIRECT;
     if((addr = ip->addrs[NDIRECT + 1]) == 0)
