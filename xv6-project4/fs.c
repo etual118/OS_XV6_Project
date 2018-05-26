@@ -400,7 +400,7 @@ bmap(struct inode *ip, uint bn)
 
   if(bn < NTINDIRECT){
 
-    cprintf("now triple!\n");
+    //cprintf("now triple!\n");
     int d_idx = bn / NINDIRECT;
     int t_idx = bn % NINDIRECT;
     if((addr = ip->addrs[NDIRECT + 1]) == 0)
@@ -408,7 +408,7 @@ bmap(struct inode *ip, uint bn)
     bp = bread(ip->dev, addr);
     a = (uint*)bp->data;
     if((addr = a[d_idx]) == 0){
-      cprintf("double\n");
+      //cprintf("double\n");
       a[d_idx] = addr = balloc(ip->dev);
       log_write(bp);
     }
@@ -417,12 +417,12 @@ bmap(struct inode *ip, uint bn)
     bp = bread(ip->dev, addr);
     a = (uint*)bp->data;
     if((addr = a[t_idx]) == 0){
-      cprintf("triple!\n");
+      //cprintf("triple!\n");
       a[t_idx] = addr = balloc(ip->dev);
       log_write(bp);
     }
     brelse(bp);
-    cprintf("fin!\n");
+    //cprintf("fin!\n");
     return addr;
 
   }
