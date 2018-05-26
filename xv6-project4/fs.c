@@ -373,7 +373,7 @@ iunlockput(struct inode *ip)
 static uint
 bmap(struct inode *ip, uint bn)
 {
-  uint addr, *a, d_index;
+  uint addr, *a;
   struct buf *bp;
 
   if(bn < NDIRECT){
@@ -398,27 +398,33 @@ bmap(struct inode *ip, uint bn)
   }
   bn -= NINDIRECT;
 
-  if(bn < NINDIRECT*NINDIRECT){
-      if((addr = ip->addrs[NDIRECT+1]) == 0)
-          ip->addrs[NDIRECT+1] = addr = balloc(ip->dev);
-      bp = bread(ip->dev, addr);
-      a = (uint*)bp->data;
-      d_index = bn/NINDIRECT;
-      if((addr = a[d_index]) == 0){
-          a[d_index] = addr = balloc(ip->dev);
-          log_write(bp);
-      }
-      brelse(bp);
+  if(bn < NTINDIRECT){
 
-      bp = bread(ip->dev, addr);
-      a = (uint*)bp->data;
-      d_index = bn%NINDIRECT;
-      if((addr = a[d_index]) == 0){
-          a[d_index] = addr = balloc(ip->dev);
-          log_write(bp);
-      }
-      brelse(bp);
-      return addr;
+    //cprintf("now triple!\n");
+    int d_idx = bn / NINDIRECT;
+    int t_idx = bn % NINDIRECT;
+    if((addr = ip->addrs[NDIRECT + 1]) == 0)
+      ip->addrs[NDIRECT + 1] = addr = balloc(ip->dev);
+    bp = bread(ip->dev, addr);
+    a = (uint*)bp->data;
+    if((addr = a[d_idx]) == 0){
+      //cprintf("double\n");
+      a[d_idx] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+    brelse(bp);
+
+    bp = bread(ip->dev, addr);
+    a = (uint*)bp->data;
+    if((addr = a[t_idx]) == 0){
+      //cprintf("triple!\n");
+      a[t_idx] = addr = balloc(ip->dev);
+      log_write(bp);
+    }
+    brelse(bp);
+    //cprintf("fin!\n");
+    return addr;
+
   }
 
   panic("bmap: out of range");
@@ -432,9 +438,9 @@ bmap(struct inode *ip, uint bn)
 static void
 itrunc(struct inode *ip)
 {
-  int i, j, k;
-  struct buf *bp, *bp2;
-  uint *a, *a2;
+  int i, j;
+  struct buf *bp, *dbp;
+  uint *a;
 
   for(i = 0; i < NDIRECT; i++){
     if(ip->addrs[i]){
@@ -454,25 +460,27 @@ itrunc(struct inode *ip)
     bfree(ip->dev, ip->addrs[NDIRECT]);
     ip->addrs[NDIRECT] = 0;
   }
-  if(ip->addrs[NDIRECT+1]){
-      bp = bread(ip->dev, ip->addrs[NDIRECT+1]);
-      a = (uint*)bp->data;
-      for(j = 0; j < NINDIRECT; j++){
-          if(a[j]){
-              bp2 = bread(ip->dev, a[j]);
-              a2 = (uint*)bp2->data;
-              for(k = 0; k < NINDIRECT; k++){
-                  if(a2[k])
-                      bfree(ip->dev, a2[k]);
-              }
-            brelse(bp2);
-            bfree(ip->dev, a[j]);
-          }
+
+  if(ip->addrs[NDIRECT + 1]){
+    uint *da;
+    bp = bread(ip->dev, ip->addrs[NDIRECT + 1]);
+    a = (uint*)bp->data;
+    for(i = 0; i < NINDIRECT; i++){
+      if(a[i]){
+        dbp = bread(ip->dev, a[i]);
+        da = (uint*)dbp->data;
+        for(j = 0; j < NINDIRECT; j++){
+          if(da[j])
+            bfree(ip->dev, da[j]);
+        }
+        brelse(dbp);
+        bfree(ip->dev, a[i]);
       }
-      brelse(bp);
-      bfree(ip->dev, ip->addrs[NDIRECT+1]);
-      ip->addrs[NDIRECT+1] = 0;
-  }           
+    }
+    brelse(bp);
+    bfree(ip->dev, ip->addrs[NDIRECT + 1]);
+    ip->addrs[NDIRECT + 1] = 0;
+  }
 
   ip->size = 0;
   iupdate(ip);
@@ -536,8 +544,10 @@ writei(struct inode *ip, char *src, uint off, uint n)
 
   if(off > ip->size || off + n < off)
     return -1;
-  if(off + n > MAXFILE*BSIZE)
+  if(off + n > MAXFILE*BSIZE){
+    cprintf("1\n");
     return -1;
+  }
 
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
