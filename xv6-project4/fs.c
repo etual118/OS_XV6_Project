@@ -397,7 +397,7 @@ bmap(struct inode *ip, uint bn)
     return addr;
   }
   bn -= NINDIRECT;
-
+  // Load double indirect block, allocating seqeuntially
   if(bn < NDINDIRECT){
     int s_idx = bn / NINDIRECT;
     int d_idx = bn % NINDIRECT;
@@ -422,7 +422,7 @@ bmap(struct inode *ip, uint bn)
 
   }
   bn -= NDINDIRECT;
-
+  // Load triple indirect block, allocating seqeuntially
   if(bn < NTINDIRECT){
 
     int s_idx = bn / NDINDIRECT;
