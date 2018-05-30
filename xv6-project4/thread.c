@@ -199,18 +199,6 @@ thread_join(thread_t thread, void **retval){
 	int fd;
 	if(thread->tinfo.master != myproc())
 		return 0;
-	for(fd = 0; fd < NOFILE; fd++){
-		if(thread->ofile[fd]){
-		  fileclose(thread->ofile[fd]);
-		  thread->ofile[fd] = 0;
-		}
-	}
-	if(thread->cwd){
-		begin_op();
-		iput(thread->cwd);
-		end_op();
-		thread->cwd = 0;
-	}
 	acquire(&ptable.lock);
 	// Master thread sleep while thread running.
 	while(join->state != ZOMBIE)
