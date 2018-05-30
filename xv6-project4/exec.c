@@ -52,7 +52,6 @@ exec(char *path, char **argv)
       master->execed = 1;
       release(&ptable.lock);
     }else{
-      cprintf("i am sleep\n");
       sleep(curproc, &ptable.lock);
     }
   }
@@ -66,7 +65,6 @@ exec(char *path, char **argv)
   int is_master = 0;
   if(curproc == master)
     is_master = 1;
-  cprintf("exec %d\n", myproc()->pid);
   begin_op();
 
   if((ip = namei(path)) == 0){
