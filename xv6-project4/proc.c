@@ -41,11 +41,12 @@ thread_exit(void *retval){
       curproc->ofile[fd] = 0;
     }
   }
-
-  begin_op();
-  iput(curproc->cwd);
-  end_op();
-  curproc->cwd = 0;
+  if(curproc->cwd){
+    begin_op();
+    iput(curproc->cwd);
+    end_op();
+    curproc->cwd = 0;
+  }
   acquire(&ptable.lock);
   // Master might be sleeping in thread_join().
   wakeup1(curproc->tinfo.master);
@@ -527,7 +528,6 @@ void
 sleep(void *chan, struct spinlock *lk)
 {
   struct proc *p = myproc();
-  cprintf("i am sleep %d\n", p->pid);
   if(p == 0)
     panic("sleep");
 
