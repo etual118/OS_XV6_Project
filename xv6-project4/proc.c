@@ -527,7 +527,7 @@ void
 sleep(void *chan, struct spinlock *lk)
 {
   struct proc *p = myproc();
-  
+  cprintf("i am sleep %d\n", p->pid);
   if(p == 0)
     panic("sleep");
 
