@@ -338,7 +338,7 @@ mast:
   // 포크하고 나중에 다시 점검해보기
   // Pass abandoned children to init.
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->parent == master && p->tinfo.master == 0){
+    if(p->parent == master /*&& p->tinfo.master == 0*/){
       p->parent = initproc;
       if(p->state == ZOMBIE)
         wakeup1(initproc);
