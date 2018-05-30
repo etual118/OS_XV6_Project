@@ -17,13 +17,13 @@ extern struct {
 void
 thread_clear(struct proc* p){
 
-  int fd;
-  for(fd = 0; fd < NOFILE; fd++){
-    if(p->ofile[fd]){
-      fileclose(p->ofile[fd]);
-      p->ofile[fd] = 0;
-    }
-  }
+  // int fd;
+  // for(fd = 0; fd < NOFILE; fd++){
+  //   if(p->ofile[fd]){
+  //     fileclose(p->ofile[fd]);
+  //     p->ofile[fd] = 0;
+  //   }
+  // }
   if(p->cwd){
     begin_op();
     iput(p->cwd);
