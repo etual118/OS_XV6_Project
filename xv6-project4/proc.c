@@ -120,14 +120,16 @@ allocproc(void)
 {
   struct proc *p;
   char *sp;
-
+  int fd;
   acquire(&ptable.lock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
     if(p->state == UNUSED){
-      if(p->ofile[fd]){
-        fileclose(p->ofile[fd]);
-        p->ofile[fd] = 0;
+      for(fd = 0; fd < NOFILE; fd++){
+        if(p->ofile[fd]){
+          fileclose(p->ofile[fd]);
+          p->ofile[fd] = 0;
+        }
       }
       if(p->cwd){
         begin_op();
