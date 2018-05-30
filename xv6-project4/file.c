@@ -139,7 +139,6 @@ filewrite(struct file *f, char *addr, int n)
 
       begin_op();
       ilock(f->ip);
-      cprintf("get lock\n");
       if ((r = writei(f->ip, addr + i, f->off, n1)) > 0)
         f->off += r;
       iunlock(f->ip);
