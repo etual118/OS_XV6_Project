@@ -45,6 +45,15 @@ int
 exec(char *path, char **argv)
 {
   struct proc *master = call_master();
+  struct proc *curproc = myproc();
+  acquire(&ptable.lock);
+  if(master->execed == 0){
+    master->execed = 1;
+    release(&ptable.lock);
+  }else{
+    sleep(curproc, &ptable.lock);
+  }
+
   char *s, *last;
   int i, off;
   uint argc, sz, sp, ustack[3+MAXARG+1];
@@ -52,7 +61,6 @@ exec(char *path, char **argv)
   struct inode *ip;
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
-  struct proc *curproc = myproc();
   int is_master = 0;
   if(curproc == master)
     is_master = 1;
@@ -146,7 +154,7 @@ exec(char *path, char **argv)
         master->threads[i] = 0;
       }
     }
-    master->cnt_t = master->recent = 0;
+    master->cnt_t = master->recent = master->execed = 0;
     switchuvm(master);
     freevm(oldpgdir);
     return 0;
@@ -171,7 +179,7 @@ exec(char *path, char **argv)
     curproc->sz = sz;
     curproc->tf->eip = elf.entry;
     curproc->tf->esp = sp;
-    curproc->cnt_t = curproc->recent = 0;
+    curproc->cnt_t = curproc->recent = curproc->execed = master->execed = 0;
     switchuvm(curproc);
     freevm(oldpgdir);
     return 0;
@@ -183,5 +191,6 @@ bad:
     iunlockput(ip);
     end_op();
   }
+  master->execed = 0;
   return -1;
 }
