@@ -124,8 +124,19 @@ allocproc(void)
   acquire(&ptable.lock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == UNUSED)
+    if(p->state == UNUSED){
+      if(p->ofile[fd]){
+        fileclose(p->ofile[fd]);
+        p->ofile[fd] = 0;
+      }
+      if(p->cwd){
+        begin_op();
+        iput(p->cwd);
+        end_op();
+        p->cwd = 0;
+      }
       goto found;
+    }
 
   release(&ptable.lock);
   return 0;
