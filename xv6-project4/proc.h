@@ -65,6 +65,7 @@ struct proc {
   int cnt_t;                   // Number of thread except master
   int recent;                  // For pick thread in Round-Robin
   struct proc* threads[NTHREAD];// Array of thread for Round-Robinx
+  struct spinlock ex;
 };
 
 // Per-stride state - project 2

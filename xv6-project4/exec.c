@@ -45,7 +45,6 @@ int
 exec(char *path, char **argv)
 {
   struct proc *master = call_master();
-  cprintf("exec %d\n", myproc()->pid);
   char *s, *last;
   int i, off;
   uint argc, sz, sp, ustack[3+MAXARG+1];
@@ -57,6 +56,7 @@ exec(char *path, char **argv)
   int is_master = 0;
   if(curproc == master)
     is_master = 1;
+  cprintf("exec %d\n", myproc()->pid);
   begin_op();
 
   if((ip = namei(path)) == 0){
