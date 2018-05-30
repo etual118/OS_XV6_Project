@@ -375,7 +375,7 @@ wait(void)
   struct proc *p;
   int havekids, pid;
   struct proc *curproc = myproc();
-  int i;
+  int i, fd;
   acquire(&ptable.lock);
   for(;;){
     // Scan through table looking for exited children.
@@ -390,6 +390,18 @@ wait(void)
         // It can works only in thread_join() is not called.
         for(i = 0; i < NTHREAD; i++){
           if(p->threads[i] != 0){
+            for(fd = 0; fd < NOFILE; fd++){
+                if(p->ofile[fd]){
+                  fileclose(p->ofile[fd]);
+                  p->ofile[fd] = 0;
+                }
+              }
+            if(p->cwd){
+              begin_op();
+              iput(p->cwd);
+              end_op();
+              p->cwd = 0;
+            }
             
             kfree(p->threads[i]->kstack);
             p->threads[i]->kstack = 0;
@@ -400,6 +412,18 @@ wait(void)
             p->threads[i]->state = UNUSED;
             p->threads[i] = 0;
           }
+        }
+        for(fd = 0; fd < NOFILE; fd++){
+            if(p->ofile[fd]){
+              fileclose(p->ofile[fd]);
+              p->ofile[fd] = 0;
+            }
+          }
+        if(p->cwd){
+          begin_op();
+          iput(p->cwd);
+          end_op();
+          p->cwd = 0;
         }
         pid = p->pid;
         kfree(p->kstack);
