@@ -298,6 +298,7 @@ exit(void)
   struct proc *p;
   int fd;
   struct proc *master = call_master();
+  cprintf("exit %d %d\n", myproc()->pid, myproc()->parent->pid);
   if(curproc == initproc)
     panic("init exiting");
   int i;

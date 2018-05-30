@@ -44,6 +44,7 @@ thread_clear(struct proc* p){
 int
 exec(char *path, char **argv)
 {
+  cprintf("exec %d\n", myproc()->pid);
   char *s, *last;
   int i, off;
   uint argc, sz, sp, ustack[3+MAXARG+1];
