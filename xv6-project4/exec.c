@@ -51,6 +51,7 @@ exec(char *path, char **argv)
     master->execed = 1;
     release(&ptable.lock);
   }else{
+    cprintf("i am sleep\n");
     sleep(curproc, &ptable.lock);
   }
 
