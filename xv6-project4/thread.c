@@ -196,8 +196,21 @@ int
 thread_join(thread_t thread, void **retval){
 
 	struct proc *join = thread;
+	int fd;
 	if(thread->tinfo.master != myproc())
 		return 0;
+	for(fd = 0; fd < NOFILE; fd++){
+		if(thread->ofile[fd]){
+		  fileclose(thread->ofile[fd]);
+		  thread->ofile[fd] = 0;
+		}
+	}
+	if(thread->cwd){
+		begin_op();
+		iput(thread->cwd);
+		end_op();
+		thread->cwd = 0;
+	}
 	acquire(&ptable.lock);
 	// Master thread sleep while thread running.
 	while(join->state != ZOMBIE)
@@ -213,11 +226,12 @@ thread_join(thread_t thread, void **retval){
 		*retval = thread->tinfo.master->ret[join->tinfo.tid];
 	
 	
-	thread->tinfo.master->threads[thread->tinfo.tid] = 0;
+	
 	thread->state = UNUSED;
 	thread->kstack = 0;
   thread->name[0] = 0;
   thread->killed = 0;
+  thread->tinfo.master->threads[thread->tinfo.tid] = 0;
   release(&ptable.lock);
 	return 0;
 }
