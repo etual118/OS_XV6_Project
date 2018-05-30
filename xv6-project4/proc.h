@@ -12,6 +12,15 @@ struct cpu {
 
 extern struct cpu cpus[NCPU];
 extern int ncpu;
+extern struct spinlock {
+  uint locked;       // Is the lock held?
+
+  // For debugging:
+  char *name;        // Name of lock.
+  struct cpu *cpu;   // The cpu holding the lock.
+  uint pcs[10];      // The call stack (an array of program counters)
+                     // that locked the lock.
+};
 
 //PAGEBREAK: 17
 // Saved registers for kernel context switches.
@@ -39,6 +48,7 @@ struct thread {
   struct proc *master;         // Points master thread if 0, proc is master
   int tid;                     // Thread id, index of master thread's threads array
 };
+
 
 // Per-process state
 struct proc {
