@@ -161,6 +161,7 @@ found:
   p->tinfo.master = 0;
   p->cnt_t = 0;
   p->killed = 0;
+  p->execed = 0;
   int i;
   for(i = 0; i < NTHREAD; i++){
     p->ret[i] = 0;
@@ -298,7 +299,6 @@ exit(void)
   struct proc *p;
   int fd;
   struct proc *master = call_master();
-  cprintf("exit %d %d\n", myproc()->pid, myproc()->parent->pid);
   if(curproc == initproc)
     panic("init exiting");
   int i;

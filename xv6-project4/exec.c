@@ -46,14 +46,13 @@ exec(char *path, char **argv)
 {
   struct proc *master = call_master();
   struct proc *curproc = myproc();
-  acquire(&ptable.lock);
-  if(master->execed == 0){
-    master->execed = 1;
-    release(&ptable.lock);
-  }else{
-    cprintf("i am sleep\n");
-    sleep(curproc, &ptable.lock);
-  }
+  // acquire(&ptable.lock);
+  // if(master->execed == 0){
+  //   master->execed = 1;
+  //   release(&ptable.lock);
+  // }else{
+  //   sleep(curproc, &ptable.lock);
+  // }
 
   char *s, *last;
   int i, off;
@@ -65,7 +64,6 @@ exec(char *path, char **argv)
   int is_master = 0;
   if(curproc == master)
     is_master = 1;
-  cprintf("exec %d\n", myproc()->pid);
   begin_op();
 
   if((ip = namei(path)) == 0){
