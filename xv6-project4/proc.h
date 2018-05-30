@@ -12,16 +12,6 @@ struct cpu {
 
 extern struct cpu cpus[NCPU];
 extern int ncpu;
-extern struct spinlock {
-  uint locked;       // Is the lock held?
-
-  // For debugging:
-  char *name;        // Name of lock.
-  struct cpu *cpu;   // The cpu holding the lock.
-  uint pcs[10];      // The call stack (an array of program counters)
-                     // that locked the lock.
-};
-
 //PAGEBREAK: 17
 // Saved registers for kernel context switches.
 // Don't need to save all the segment registers (%cs, etc),
@@ -74,8 +64,7 @@ struct proc {
   int dealloc[NTHREAD];        // deallocated size of stack
   int cnt_t;                   // Number of thread except master
   int recent;                  // For pick thread in Round-Robin
-  struct proc* threads[NTHREAD];// Array of thread for Round-Robin
-  struct spinlock execlock;
+  struct proc* threads[NTHREAD];// Array of thread for Round-Robinx
 };
 
 // Per-stride state - project 2
