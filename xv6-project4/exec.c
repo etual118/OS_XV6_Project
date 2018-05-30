@@ -44,6 +44,8 @@ thread_clear(struct proc* p){
 int
 exec(char *path, char **argv)
 {
+  struct proc *master = call_master();
+  acquire(&master->execlock);
   cprintf("exec %d\n", myproc()->pid);
   char *s, *last;
   int i, off;
@@ -53,7 +55,6 @@ exec(char *path, char **argv)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
-  struct proc *master = call_master();
   int is_master = 0;
   if(curproc == master)
     is_master = 1;
@@ -149,6 +150,7 @@ exec(char *path, char **argv)
     master->cnt_t = master->recent = 0;
     switchuvm(master);
     freevm(oldpgdir);
+    release(&master->execlock);
     return 0;
   // if it is workter thread, kill other workter thread and master
   // then it comes to master thread after exec
@@ -174,6 +176,7 @@ exec(char *path, char **argv)
     curproc->cnt_t = curproc->recent = 0;
     switchuvm(curproc);
     freevm(oldpgdir);
+    release(&master->execlock);
     return 0;
   }
 bad:
@@ -183,5 +186,6 @@ bad:
     iunlockput(ip);
     end_op();
   }
+  release(&master->execlock);
   return -1;
 }
