@@ -157,36 +157,36 @@ filewrite(struct file *f, char *addr, int n)
   panic("filewrite");
 }
 
-int
-pread(int fd, void *addr, int n, int off){
-  struct proc *p = myproc();
-  int old = p->ofile[fd]->off;
-  int retval;
+// int
+// pread(int fd, void *addr, int n, int off){
+//   struct proc *p = myproc();
+//   int old = p->ofile[fd]->off;
+//   int retval;
 
-  acquire(&readlock);
-  p->ofile[fd]->off = off;
+//   acquire(&readlock);
+//   p->ofile[fd]->off = off;
 
-  retval = fileread(p->ofile[fd], (char*)addr, n);
-  p->ofile[fd]->off = old;
-  release(&readlock);
-  return retval;
-}
+//   retval = fileread(p->ofile[fd], (char*)addr, n);
+//   p->ofile[fd]->off = old;
+//   release(&readlock);
+//   return retval;
+// }
 
 
-int 
-pwrite(int fd, void *addr, int n, int off){
-  struct proc *p = myproc();
-  int old = p->ofile[fd]->off;
-  int retval;
+// int 
+// pwrite(int fd, void *addr, int n, int off){
+//   struct proc *p = myproc();
+//   int old = p->ofile[fd]->off;
+//   int retval;
 
-  acquire(&readlock);
-  p->ofile[fd]->off = off;
+//   acquire(&readlock);
+//   p->ofile[fd]->off = off;
 
-  retval = filewrite(p->ofile[fd], (char*)addr, n);
-  p->ofile[fd]->off = old;
-  release(&readlock);
-  return retval;
-}
+//   retval = filewrite(p->ofile[fd], (char*)addr, n);
+//   p->ofile[fd]->off = old;
+//   release(&readlock);
+//   return retval;
+// }
 
 
 
