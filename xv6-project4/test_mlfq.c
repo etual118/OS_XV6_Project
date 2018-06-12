@@ -4,7 +4,7 @@
 #include "fs.h"
 #include "fcntl.h"
 
-#define FILESIZE        (16*1024*1024)  // 16 MB
+#define FILESIZE        (8*1024*1024)  // 16 MB
 #define BUFSIZE         512
 #define BUF_PER_FILE    ((FILESIZE) / (BUFSIZE))
 #define NUM_STRESS      4
