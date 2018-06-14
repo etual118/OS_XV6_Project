@@ -15,7 +15,8 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
-
+struct spinlock readlock;
+struct spinlock writelock;
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
 static int
@@ -90,6 +91,42 @@ sys_write(void)
   return filewrite(f, p, n);
 }
 
+int
+sys_pread(void){
+  struct file *f;
+  int n, off;
+  char *p;
+  if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0|| argint(3, &off) < 0 )
+    return -1;
+  int old = f->off;
+  int retval;
+  acquire(&readlock);
+  f->off = off;
+  retval = fileread(f, p, n);
+  f->off = old;
+  release(&readlock);
+  return retval;
+}
+
+
+int 
+sys_pwrite(void){
+  struct file *f;
+  int n, off;
+  char *p;
+  if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0|| argint(3, &off) < 0 )
+    return -1;
+  int old = p->ofile[fd]->off;
+  int retval;
+  int old = f->off;
+  int retval;
+  acquire(&writelock);
+  f->off = off;
+  retval = filewrite(f, p, n);
+  f->off = old;
+  release(&writelock);
+  return retval;
+}
 int
 sys_close(void)
 {

@@ -196,7 +196,6 @@ int
 thread_join(thread_t thread, void **retval){
 
 	struct proc *join = thread;
-	int fd;
 	if(thread->tinfo.master != myproc())
 		return 0;
 	acquire(&ptable.lock);

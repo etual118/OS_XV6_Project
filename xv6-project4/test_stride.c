@@ -1,62 +1,145 @@
-/**
- *  This program requests portion of CPU resources with given parameter
- * value by calling set_cpu_share() system call.
- *  After that, periodically increases cnt values until its LIFETIME.
- */
-
 #include "types.h"
 #include "stat.h"
 #include "user.h"
+#include "fs.h"
+#include "fcntl.h"
 
-#define LIFETIME        1000        // (ticks)
-#define COUNT_PERIOD    1000000     // (iteration)
+#define NUM_THREAD       10
+#define FILESIZE         (1600*1024)  // 1.6 MB
+#define BUFSIZE          512
+#define FSIZE_PER_THREAD ((FILESIZE) / (NUM_THREAD))
+
+char *filepath = "myfile";
+int fd; // Shared among threads
+
+void pwritetest();
+void preadtest();
 
 int
 main(int argc, char *argv[])
 {
-  uint i;
-  int cnt = 0;
-  int cpu_share;
-  uint start_tick;
-  uint curr_tick;
+  // pwrite test
+  printf(1, "1. Start pwrite test\n");
+  pwritetest();
+  printf(1, "Finished\n");
+  
+  // pread test
+  printf(1, "2. Start pread test\n");
+  preadtest();
+  printf(1, "Finished\n");
 
-  if (argc < 2) {
-    printf(1, "usage: sched_test_stride cpu_share(%)\n");
-    exit();
-  }
+  exit();
+}
 
-  cpu_share = atoi(argv[1]);
 
-  // Register this process to the Stride scheduler
-  if (set_cpu_share(cpu_share) < 0) {
-    printf(1, "cannot set cpu share\n");
-    exit();
-  }
+void
+pwritetestmain(void *arg)
+{
+  int tid = (int) arg;
+  int r, i, off;
+  char data[BUFSIZE];
 
-  // Get start time
-  start_tick = uptime();
+  int start = FSIZE_PER_THREAD * tid;
+  int end = start + FSIZE_PER_THREAD;
 
-  i = 0;
-  while (1) {
-    i++;
+  for(i = 0; i < BUFSIZE; i++)
+    data[i] = (tid + i) % 128;
 
-    // Prevent code optimization
-    __sync_synchronize();
-
-    if (i == COUNT_PERIOD) {
-      cnt++;
-
-      // Get current time
-      curr_tick = uptime();
-
-      if (curr_tick - start_tick > LIFETIME) {
-        // Terminate process
-        printf(1, "STRIDE(%d%%), cnt: %d\n", cpu_share, cnt);
-        break;
-      }
-      i = 0;
+  printf(1, "Thread #%d is writing (%d ~ %d)\n", tid, start, end);
+  
+  for(off = start; off < end; off+=BUFSIZE){
+    if ((off / BUFSIZE) % 300 == 0){
+      printf(1, "Thread %d: %d bytes written\n", tid, off - start);
+    }
+    if ((r = pwrite(fd, data, sizeof(data), off)) != sizeof(data)){
+      printf(1, "pwrite returned %d : failed\n", r);
+      exit();
     }
   }
 
-  exit();
+  printf(1, "Thread %d: writing finished\n", tid);
+  thread_exit((void *)0);
+}
+
+void
+pwritetest()
+{
+  thread_t threads[NUM_THREAD];
+  int i;
+  void* retval;
+  
+  // Open file (file is shared among thread)
+  fd = open(filepath, O_CREATE | O_RDWR);
+
+  for(i = 0; i < NUM_THREAD; i++){
+    if(thread_create(&threads[i], pwritetestmain, (void*)i) != 0){
+      printf(1, "panic at thread_create\n");
+      close(fd);
+      return;
+    }
+  }
+
+  for (i = 0; i < NUM_THREAD; i++){
+    if (thread_join(threads[i], &retval) != 0){
+      printf(1, "panic at thread_join\n");
+      close(fd);
+      return; 
+    }
+  }
+  close(fd);
+}
+
+void
+preadtestmain(void *arg)
+{
+  int tid = (int) arg;
+  int r, off, i;
+  char buf[BUFSIZE];
+  
+  int start = FSIZE_PER_THREAD * tid;
+  int end = start + FSIZE_PER_THREAD;
+
+  printf(1, "Thread #%d is reading (%d ~ %d)\n", tid, start, end);
+  
+  for(off = start; off < end; off+=BUFSIZE){
+    if ((r = pread(fd, buf, sizeof(buf), off)) != sizeof(buf)){
+      printf(1, "pread returned %d : failed\n", r);
+      exit();
+    }
+    for (i = 0; i < BUFSIZE; i++) {
+      if (buf[i] != (tid + i) % 128) {
+        printf(1, "data inconsistency detected\n");
+        exit();
+      }
+    }
+  }
+  thread_exit((void *)0);
+}
+
+void
+preadtest()
+{
+  thread_t threads[NUM_THREAD];
+  int i;
+  void* retval;
+  
+  // Open file (file is shared among thread)
+  fd = open(filepath, O_RDONLY);
+
+  for(i = 0; i < NUM_THREAD; i++){
+    if(thread_create(&threads[i], preadtestmain, (void*)i) != 0){
+      printf(1, "panic at thread_create\n");
+      close(fd);
+      return;
+    }
+  }
+
+  for (i = 0; i < NUM_THREAD; i++){
+    if (thread_join(threads[i], &retval) != 0){
+      printf(1, "panic at thread_join\n");
+      close(fd);
+      return; 
+    }
+  }
+  close(fd);
 }
