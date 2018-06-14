@@ -109,34 +109,58 @@ sys_pread(void){
 }
 
 
-int 
-sys_pwrite(void){
+// int 
+// sys_pwrite(void){
+//   struct file *f;
+//   int n, off;
+//   char *p;
+//   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0|| argint(3, &off) < 0 )
+//     return -1;
+//   int old = f->off;
+//   int retval;
+//  // acquire(&writelock);
+//   f->off = off;
+//   retval = filewrite(f, p, n);
+//   f->off = old;
+//  // release(&writelock);
+//   return retval;
+// }
+
+// int
+// sys_close(void)
+// {
+//   int fd;
+//   struct file *f;
+
+//   if(argfd(0, &fd, &f) < 0)
+//     return -1;
+//   myproc()->ofile[fd] = 0;
+//   fileclose(f);
+//   return 0;
+// }
+// 
+int
+sys_pread(void)
+{
   struct file *f;
   int n, off;
   char *p;
-  if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0|| argint(3, &off) < 0 )
+
+  if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0 || argint(3, &off) < 0)
     return -1;
-  int old = f->off;
-  int retval;
- // acquire(&writelock);
-  f->off = off;
-  retval = filewrite(f, p, n);
-  f->off = old;
- // release(&writelock);
-  return retval;
+  return filepread(f, p, n, off);
 }
 
 int
-sys_close(void)
+sys_pwrite(void)
 {
-  int fd;
   struct file *f;
+  int n, off;
+  char *p;
 
-  if(argfd(0, &fd, &f) < 0)
+  if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0 || argint(3, &off) < 0)
     return -1;
-  myproc()->ofile[fd] = 0;
-  fileclose(f);
-  return 0;
+  return filepwrite(f, p, n, off);
 }
 
 int
