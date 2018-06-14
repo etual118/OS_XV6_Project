@@ -116,8 +116,6 @@ sys_pwrite(void){
   char *p;
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0|| argint(3, &off) < 0 )
     return -1;
-  int old = p->ofile[fd]->off;
-  int retval;
   int old = f->off;
   int retval;
   acquire(&writelock);
