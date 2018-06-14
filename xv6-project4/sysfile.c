@@ -15,8 +15,8 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
-struct spinlock readlock;
-struct spinlock writelock;
+// struct spinlock readlock;
+// struct spinlock writelock;
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
 static int
@@ -100,11 +100,11 @@ sys_pread(void){
     return -1;
   int old = f->off;
   int retval;
-  acquire(&readlock);
+  //acquire(&readlock);
   f->off = off;
   retval = fileread(f, p, n);
   f->off = old;
-  release(&readlock);
+  //release(&readlock);
   return retval;
 }
 
@@ -118,11 +118,11 @@ sys_pwrite(void){
     return -1;
   int old = f->off;
   int retval;
-  acquire(&writelock);
+ // acquire(&writelock);
   f->off = off;
   retval = filewrite(f, p, n);
   f->off = old;
-  release(&writelock);
+ // release(&writelock);
   return retval;
 }
 
