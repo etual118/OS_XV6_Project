@@ -586,7 +586,7 @@ readi(struct inode *ip, char *dst, uint off, uint n)
 // Write data to inode.
 // Caller must hold ip->lock.
 int
-writei(struct inode *ip, char *src, uint off, uint n)
+pwritei(struct inode *ip, char *src, uint off, uint n)
 {
   uint tot, m;
   struct buf *bp;
@@ -616,9 +616,9 @@ writei(struct inode *ip, char *src, uint off, uint n)
   }
   return n;
 }
-
+struct spinlock hlock;
 int
-pwritei(struct inode *ip, char *src, uint off, uint n)
+writei(struct inode *ip, char *src, uint off, uint n)
 {
   uint tot, m;
   struct buf *bp;
@@ -634,24 +634,24 @@ pwritei(struct inode *ip, char *src, uint off, uint n)
   if(off + n > MAXFILE*BSIZE)
     return -1;
 
+  acquire(&hlock);
+  if(off > ip->size){
+    cprintf("fire in the hole!\n");
+    uint holesize = off - ip->size;
+    uint holestart = ip->size;
+    char holeunit = 0;
+    char* hole = holeunit;
+    for(tot = 0; tot<holesize; tot+=m, holestart+=m, hole+=m){
+      bp = bread(ip->dev, bmap(ip, holestart/BSIZE));
+      m = min(holesize - tot, BSIZE - holestart%BSIZE);
+      memmove(bp->data + holestart%BSIZE, hole, m);
+      log_write(bp);
+      brelse(bp);
+    }
 
-  // if(off > ip->size){
-  //   cprintf("fire in the hole!\n");
-  //   uint holesize = off - ip->size;
-  //   uint holestart = ip->size;
-  //   char holeunit = 0;
-  //   char* hole = holeunit;
-  //   for(tot = 0; tot<holesize; tot+=m, holestart+=m, hole+=m){
-  //     bp = bread(ip->dev, bmap(ip, holestart/BSIZE));
-  //     m = min(holesize - tot, BSIZE - holestart%BSIZE);
-  //     memmove(bp->data + holestart%BSIZE, hole, m);
-  //     log_write(bp);
-  //     brelse(bp);
-  //   }
+  }
 
-  // }
-
-
+  release(&hlock);
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
     m = min(n - tot, BSIZE - off%BSIZE);
