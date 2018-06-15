@@ -616,6 +616,7 @@ pwritei(struct inode *ip, char *src, uint off, uint n)
   }
   return n;
 }
+
 struct spinlock hlock;
 int
 writei(struct inode *ip, char *src, uint off, uint n)
@@ -633,7 +634,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
     return -1;
   if(off + n > MAXFILE*BSIZE)
     return -1;
-
+  cprintf("~~write~~\n");
   acquire(&hlock);
   if(off > ip->size){
     cprintf("fire in the hole!\n");
@@ -648,9 +649,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
       log_write(bp);
       brelse(bp);
     }
-
   }
-
   release(&hlock);
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
