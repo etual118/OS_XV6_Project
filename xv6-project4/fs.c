@@ -635,22 +635,22 @@ writei(struct inode *ip, char *src, uint off, uint n)
   if(off + n > MAXFILE*BSIZE)
     return -1;
 
-  // acquire(&hlock);
-  // if(off > ip->size){
-  //   cprintf("fire in the hole!\n");
-  //   uint holesize = off - ip->size;
-  //   uint holestart = ip->size;
-  //   char holeunit = 0;
-  //   char* hole = holeunit;
-  //   for(tot = 0; tot<holesize; tot+=m, holestart+=m, hole+=m){
-  //     bp = bread(ip->dev, bmap(ip, holestart/BSIZE));
-  //     m = min(holesize - tot, BSIZE - holestart%BSIZE);
-  //     memmove(bp->data + holestart%BSIZE, hole, m);
-  //     log_write(bp);
-  //     brelse(bp);
-  //   }
-  // }
-  // release(&hlock);
+  acquire(&hlock);
+  if(off > ip->size){
+    cprintf("fire in the hole!\n");
+    uint holesize = off - ip->size;
+    uint holestart = ip->size;
+    char holeunit = 0;
+    char* hole = holeunit;
+    for(tot = 0; tot<holesize; tot+=m, holestart+=m){
+      bp = bread(ip->dev, bmap(ip, holestart/BSIZE));
+      m = min(holesize - tot, BSIZE - holestart%BSIZE);
+      memmove(bp->data + holestart%BSIZE, hole, m);
+      log_write(bp);
+      brelse(bp);
+    }
+  }
+  release(&hlock);
   
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));

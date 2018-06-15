@@ -156,6 +156,7 @@ filewrite(struct file *f, char *addr, int n)
   panic("filewrite");
 }
 
+// This is newly added function for sys_pread()
 int
 filepread(struct file *f, char *addr, int n, int off)
 {
@@ -167,13 +168,14 @@ filepread(struct file *f, char *addr, int n, int off)
     return piperead(f->pipe, addr, n);
   if(f->type == FD_INODE){
     ilock(f->ip);
+    // Different from fileread(), it do not change offset value
     r = readi(f->ip, addr, off, n);
     iunlock(f->ip);
     return r;
   }
   panic("filepread");
 }
-
+// This is newly added function for sys_pwrite()
 int
 filepwrite(struct file *f, char *addr, int n, int off)
 {
@@ -193,6 +195,7 @@ filepwrite(struct file *f, char *addr, int n, int off)
 
       begin_op();
       ilock(f->ip);
+      // Different from filewrite(), it do not change offset value
       r = writei(f->ip, addr + i, off, n1);
       iunlock(f->ip);
       end_op();
