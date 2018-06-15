@@ -609,7 +609,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
     uint holesize = off - ip->size;
     uint holestart = ip->size;
     char holeunit = 0;
-    char* hole = src;
+    char* hole = holeunit;
     for(tot = 0; tot<holesize; tot+=m, holestart+=m, hole+=m){
       bp = bread(ip->dev, bmap(ip, holestart/BSIZE));
       m = min(holesize - tot, BSIZE - holestart%BSIZE);
