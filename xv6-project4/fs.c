@@ -634,7 +634,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
     return -1;
   if(off + n > MAXFILE*BSIZE)
     return -1;
-  acquire(&hlock);
+  pushcli()
   if(off > ip->size){
     cprintf("fire in the hole!\n");
     uint holesize = off - ip->size;
@@ -649,7 +649,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
       brelse(bp);
     }
   }
-  release(&hlock);
+  popcli();
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
     m = min(n - tot, BSIZE - off%BSIZE);
