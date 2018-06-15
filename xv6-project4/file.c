@@ -156,7 +156,6 @@ filewrite(struct file *f, char *addr, int n)
   panic("filewrite");
 }
 
-// Read from file f.
 int
 filepread(struct file *f, char *addr, int n, int off)
 {
@@ -175,8 +174,6 @@ filepread(struct file *f, char *addr, int n, int off)
   panic("filepread");
 }
 
-//PAGEBREAK!
-// Write to file f.
 int
 filepwrite(struct file *f, char *addr, int n, int off)
 {
@@ -187,12 +184,6 @@ filepwrite(struct file *f, char *addr, int n, int off)
   if(f->type == FD_PIPE)
     return pipewrite(f->pipe, addr, n);
   if(f->type == FD_INODE){
-    // write a few blocks at a time to avoid exceeding
-    // the maximum log transaction size, including
-    // i-node, indirect block, allocation blocks,
-    // and 2 blocks of slop for non-aligned writes.
-    // this really belongs lower down, since writei()
-    // might be writing a device like the console.
     int max = ((MAXOPBLOCKS-1-1-2) / 2) * 512;
     int i = 0;
     while(i < n){

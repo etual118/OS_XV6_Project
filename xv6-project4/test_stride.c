@@ -32,7 +32,7 @@ main(int argc, char *argv[])
 }
 
 
-void
+void*
 pwritetestmain(void *arg)
 {
   int tid = (int) arg;
@@ -72,6 +72,8 @@ pwritetest()
   fd = open(filepath, O_CREATE | O_RDWR);
 
   for(i = 0; i < NUM_THREAD; i++){
+    if(i == 5)
+      continue;
     if(thread_create(&threads[i], pwritetestmain, (void*)i) != 0){
       printf(1, "panic at thread_create\n");
       close(fd);
@@ -89,7 +91,7 @@ pwritetest()
   close(fd);
 }
 
-void
+void*
 preadtestmain(void *arg)
 {
   int tid = (int) arg;
@@ -127,6 +129,8 @@ preadtest()
   fd = open(filepath, O_RDONLY);
 
   for(i = 0; i < NUM_THREAD; i++){
+    if(i == 5)
+      continue;
     if(thread_create(&threads[i], preadtestmain, (void*)i) != 0){
       printf(1, "panic at thread_create\n");
       close(fd);
