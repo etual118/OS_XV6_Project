@@ -651,7 +651,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
   //   }
   // }
   //release(&hlock);
-  acquire(&hlock);
+  
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
     m = min(n - tot, BSIZE - off%BSIZE);
@@ -659,7 +659,6 @@ writei(struct inode *ip, char *src, uint off, uint n)
     log_write(bp);
     brelse(bp);
   }
-  release(&hlock);
 
   if(n > 0 && off > ip->size){
     ip->size = off;
