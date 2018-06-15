@@ -26,7 +26,6 @@ static void itrunc(struct inode*);
 // there should be one superblock per disk device, but we run with
 // only one device
 struct superblock sb; 
-struct spinlock holelock;
 // Read the super block.
 void
 readsb(int dev, struct superblock *sb)
@@ -598,28 +597,10 @@ writei(struct inode *ip, char *src, uint off, uint n)
     return devsw[ip->major].write(ip, src, n);
   }
 
-  if(/*off > ip->size ||*/ off + n < off)
+  if(off > ip->size || off + n < off)
     return -1;
   if(off + n > MAXFILE*BSIZE)
     return -1;
-  //acquire(&holelock);
-
-  if(off > ip->size){
-    cprintf("fire in the hole!\n");
-    uint holesize = off - ip->size;
-    uint holestart = ip->size;
-    char holeunit = 0;
-    char* hole = holeunit;
-    for(tot = 0; tot<holesize; tot+=m, holestart+=m, hole+=m){
-      bp = bread(ip->dev, bmap(ip, holestart/BSIZE));
-      m = min(holesize - tot, BSIZE - holestart%BSIZE);
-      memmove(bp->data + holestart%BSIZE, hole, m);
-      log_write(bp);
-      brelse(bp);
-    }
-
-  }
-  //release(&holelock);
 
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
@@ -636,6 +617,55 @@ writei(struct inode *ip, char *src, uint off, uint n)
   return n;
 }
 
+int
+pwritei(struct inode *ip, char *src, uint off, uint n)
+{
+  uint tot, m;
+  struct buf *bp;
+
+  if(ip->type == T_DEV){
+    if(ip->major < 0 || ip->major >= NDEV || !devsw[ip->major].write)
+      return -1;
+    return devsw[ip->major].write(ip, src, n);
+  }
+
+  if(/*off > ip->size ||*/ off + n < off)
+    return -1;
+  if(off + n > MAXFILE*BSIZE)
+    return -1;
+
+
+  // if(off > ip->size){
+  //   cprintf("fire in the hole!\n");
+  //   uint holesize = off - ip->size;
+  //   uint holestart = ip->size;
+  //   char holeunit = 0;
+  //   char* hole = holeunit;
+  //   for(tot = 0; tot<holesize; tot+=m, holestart+=m, hole+=m){
+  //     bp = bread(ip->dev, bmap(ip, holestart/BSIZE));
+  //     m = min(holesize - tot, BSIZE - holestart%BSIZE);
+  //     memmove(bp->data + holestart%BSIZE, hole, m);
+  //     log_write(bp);
+  //     brelse(bp);
+  //   }
+
+  // }
+
+
+  for(tot=0; tot<n; tot+=m, off+=m, src+=m){
+    bp = bread(ip->dev, bmap(ip, off/BSIZE));
+    m = min(n - tot, BSIZE - off%BSIZE);
+    memmove(bp->data + off%BSIZE, src, m);
+    log_write(bp);
+    brelse(bp);
+  }
+
+  if(n > 0 && off > ip->size){
+    ip->size = off;
+    iupdate(ip);
+  }
+  return n;
+}
 //PAGEBREAK!
 // Directories
 

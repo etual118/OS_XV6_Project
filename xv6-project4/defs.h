@@ -54,6 +54,7 @@ struct inode*   nameiparent(char*, char*);
 int             readi(struct inode*, char*, uint, uint);
 void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, char*, uint, uint);
+int 			pwritei(struct inode *ip, char *src, uint off, uint n);
 
 // ide.c
 void            ideinit(void);
