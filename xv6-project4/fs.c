@@ -602,7 +602,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
     return -1;
   if(off + n > MAXFILE*BSIZE)
     return -1;
-  acquire(&holelock);
+  //acquire(&holelock);
   cprintf("fire in the hole!\n");
   if(off > ip->size){
     uint holesize = off - ip->size;
@@ -618,7 +618,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
     }
 
   }
-  release(&holelock);
+  //release(&holelock);
 
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
