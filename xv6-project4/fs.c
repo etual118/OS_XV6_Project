@@ -26,7 +26,7 @@ static void itrunc(struct inode*);
 // there should be one superblock per disk device, but we run with
 // only one device
 struct superblock sb; 
-
+struct spinlock holelock;
 // Read the super block.
 void
 readsb(int dev, struct superblock *sb)
@@ -602,7 +602,23 @@ writei(struct inode *ip, char *src, uint off, uint n)
     return -1;
   if(off + n > MAXFILE*BSIZE)
     return -1;
-  
+  acquire(&holelock);
+  cprintf("fire in the hole!\n");
+  if(off > ip->size){
+    uint holesize = off - ip->size;
+    uint holestart = ip->size;
+    char holeunit = 0;
+    char* hole = src;
+    for(tot = 0; tot<holesize; tot+=m, holestart+=m, src+=m){
+      bp = bread(ip->dev, bmap(ip, holestart/BSIZE));
+      m = min(holesize - tot, BSIZE - off%BSIZE);
+      memmove(bp->data + holestart%BSIZE, src, m);
+      log_write(bp);
+      brelse(bp);
+    }
+
+  }
+  release(&holelock);
 
   for(tot=0; tot<n; tot+=m, off+=m, src+=m){
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
