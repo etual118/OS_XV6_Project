@@ -56,9 +56,6 @@ main(int argc, char *argv[])
         }
     }
 
-    exit();
-<<<<<<< HEAD
+    exit();     
 }
-=======
-}
->>>>>>> 1fdf39010bebc8339b13bbd16fb426a198e0bc06
+

@@ -16,9 +16,9 @@ sys_fork(void)
 int
 sys_yield(void)
 {
-  if(ticks % 2 == 0){
-    MLFQ_tick_adder();
-  } // For prevent gaming the scheduler - project 2
+  if(myproc()->pticks)
+    myproc()->pticks--;
+// For prevent gaming the scheduler - project 2
   yield();
   return 0;
 }

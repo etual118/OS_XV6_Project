@@ -618,6 +618,7 @@ pwritei(struct inode *ip, char *src, uint off, uint n)
 }
 
 struct spinlock hlock;
+
 int
 writei(struct inode *ip, char *src, uint off, uint n)
 {

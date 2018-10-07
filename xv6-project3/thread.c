@@ -196,7 +196,7 @@ int
 thread_join(thread_t thread, void **retval){
 
 	struct proc *join = thread;
-	if(thread->tinfo.master != myproc())
+	if(thread->state == UNUSED)
 		return 0;
 	acquire(&ptable.lock);
 	// Master thread sleep while thread running.
