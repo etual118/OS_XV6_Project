@@ -94,7 +94,7 @@ trap(struct trapframe *tf)
       if(mappages(myproc()->pgdir, (char*)border, rcr2() - border,
                   V2P(border), PTE_W|PTE_U) < 0) {
         freevm(myproc()->pgdir);
-        return 0;
+        return;
       }
       break;
     }
