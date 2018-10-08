@@ -90,9 +90,13 @@ trap(struct trapframe *tf)
       panic("trap");
     }
     if(tf->trapno == T_PGFLT){
+      char* new = kalloc();
+      if(new == 0)
+        return ;
       uint border = PGROUNDDOWN(rcr2());
+      memset(mem, 0, rcr2() - border);
       if(mappages(myproc()->pgdir, (char*)border, rcr2() - border,
-                  V2P(border), PTE_W|PTE_U) < 0) {
+                  V2P(new), PTE_W|PTE_U) < 0) {
         freevm(myproc()->pgdir);
         return;
       }
