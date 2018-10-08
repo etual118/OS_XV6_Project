@@ -91,9 +91,9 @@ trap(struct trapframe *tf)
     }
     if(tf->trapno == T_PGFLT){
       uint border = PGROUNDDOWN(rcr2());
-      if(mappages(curproc->pgdir, border, rcr2() - border,
+      if(mappages(myproc()->pgdir, (char*)border, rcr2() - border,
                   V2P(border), PTE_W|PTE_U) < 0) {
-        freevm(curproc->pgdir);
+        freevm(myproc()->pgdir);
         return 0;
       }
       break;
