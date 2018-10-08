@@ -14,6 +14,9 @@ extern uint vectors[];  // in vectors.S: array of 256 entry pointers
 struct spinlock tickslock;
 uint ticks;
 
+extern int mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm);
+//매핑을 위해 가져온 함수
+
 void
 tvinit(void)
 {
@@ -85,6 +88,15 @@ trap(struct trapframe *tf)
       cprintf("unexpected trap %d from cpu %d eip %x (cr2=0x%x)\n",
               tf->trapno, cpuid(), tf->eip, rcr2());
       panic("trap");
+    }
+    if(tf->trapno == T_PGFLT){
+      uint border = PGROUNDDOWN(rcr2());
+      if(mappages(curproc->pgdir, border, rcr2() - border,
+                  V2P(border), PTE_W|PTE_U) < 0) {
+        freevm(curproc->pgdir);
+        return 0;
+      }
+      break;
     }
     // In user space, assume process misbehaved.
     cprintf("pid %d %s: trap %d err %d on cpu %d "
