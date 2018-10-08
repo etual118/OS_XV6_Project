@@ -1,4 +1,5 @@
 struct stat;
+struct rtcdate;
 
 // system calls
 int fork(void);
@@ -18,9 +19,15 @@ int link(char*, char*);
 int mkdir(char*);
 int chdir(char*);
 int dup(int);
-int getpid();
+int getpid(void);
+int getppid(void);
 char* sbrk(int);
 int sleep(int);
+int uptime(void);
+int myfunction(char*);
+int yield(void);
+int getlev(void);
+int set_cpu_share(int);
 
 // ulib.c
 int stat(char*, struct stat*);
